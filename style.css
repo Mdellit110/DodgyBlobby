@@ -70,9 +70,10 @@ button:hover {
   }
 }
 
-
 /* player related css */
 #player {
-  height: 200px;
-  width: 200px;
+  height: 90px;
+  width: 100px;
+  position: relative;
+  top: 490px;
 }
