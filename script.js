@@ -1,7 +1,6 @@
-const runMainMenu = () => {
-  const title = document.querySelector('.title');
-  title.className = 'show';
-  title.innerText = '!ESCAPE!';
+const createPlayer = () => {
+  const player = document.querySelector('.player');
+  player.style.background = 'blue';
+  player.name = 'matt';
+  player.setAttribute ('id','player');
 }
-
-runMainMenu();

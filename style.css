@@ -1,7 +1,78 @@
-.show {
-  font-family: 'Bungee Shade', cursive;
-  font-size: 6em;
-  color: #004400;
+body {
+  background: #1f1915;
   text-align: center;
-  padding-top: 130px;
+}
+.title {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 10em;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+  top: 140px;
+  text-align: center;
+  position: relative;
+  animation-name: dropDown;
+  animation-duration: 4s;
+}
+
+button {
+  width: 200px;
+  height: 65px;
+  position: relative;
+  border-radius: 10px;
+  border: #1f1915;
+  font-family: 'bungee', cursive;
+  font-size: 2em;
+  color: #1f1915;
+  box-shadow: 0px 0px 50px 0px #efb03b;
+  background: #ed9728;
+}
+button:focus {
+  ;
+}
+
+button:hover {
+  box-shadow: 0px 0px 50px 10px #efb03b;
+}
+
+#start {
+  top: 260px;
+  animation-name: enterRight;
+  animation-duration: 4s;
+}
+#tutorial {
+  top: 400px;
+  animation-name: enterLeft;
+  animation-duration: 4s;
+}
+
+@keyframes dropDown {
+  0% {
+    transform: translateY(-400px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@keyframes enterLeft {
+  0% {
+    transform: translateX(-1100px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+@keyframes enterRight {
+  0% {
+    transform: translateX(1100px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+
+/* player related css */
+#player {
+  height: 200px;
+  width: 200px;
 }
