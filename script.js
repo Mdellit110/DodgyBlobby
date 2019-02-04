@@ -3,14 +3,13 @@ const startButton = document.querySelector('#start');
 const tutorialButton = document.querySelector('#tutorial');
 const title = document.querySelector('.title')
 const player = document.querySelector('.player');
+const tryAgain = document.querySelector('.tryAgain');
 
 //player creation
 const createPlayer = () => {
   player.style.background = 'blue';
   player.name = 'matt';
   player.setAttribute ('id','player');
-  // player.style.left = '740px';
-  return player;
 }
 
 //player movement
@@ -43,6 +42,7 @@ const generateBlocks = (block) => {
       if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right) {
         if (playerPos.top <= blockPos.bottom) {
           player.style.background = 'red';
+          youLose();
         }
       }
     }
@@ -70,17 +70,28 @@ const moveBlocks = (num) => {
   const setIt = setInterval(dropEm, 50);
 }
 
-  // start button initiates game start;
-  const startGame = () => {
-    startButton.style.display = 'none';
-    title.style.display = 'none';
-    tutorialButton.style.display = 'none';
-    createPlayer();
-    let num = 0;
-    generateBlocks();
-    moveBlocks(num);
-    body.addEventListener('keydown', movePlayer);
-  }
+// start button initiates game start;
+const startGame = () => {
+  startButton.style.display = 'none';
+  title.style.display = 'none';
+  tutorialButton.style.display = 'none';
+  createPlayer();
+  let num = 0;
+  generateBlocks();
+  moveBlocks(num);
+  body.addEventListener('keydown', movePlayer);
+}
+
+// when loss conditions are met
+const youLose = () => {
+  const yesButton = document.querySelector('#yes')
+  const noButton = document.querySelector('#no')
+  const tryAgain = document.querySelector('.tryAgain');
+  tryAgain.style.display = 'block';
+  yesButton.style.display = 'block';
+  noButton.style.display = 'block';
+}
+
 
 
 

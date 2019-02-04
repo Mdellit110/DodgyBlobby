@@ -72,6 +72,30 @@ button:hover {
   }
 }
 
+/* lose state */
+.tryAgain {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 10em;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+  top: 140px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  display: none;
+}
+
+#no {
+  display: none;
+  top: 400px;
+  left: 860px;
+}
+
+#yes {
+  display: none;
+  top: 462px;
+  left: 493px;
+}
 
 /* player related css */
 #player {
@@ -87,6 +111,5 @@ button:hover {
   height: 30px;
   width: 320px;
   position: absolute;
-  /* display: inline-flex; */
   left: 640px;
 }
