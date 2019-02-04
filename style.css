@@ -84,7 +84,7 @@ button:hover {
 /* smashy blocks */
 .blocks {
   height: 30px;
-  width: 100px;
+  width: 410px;
   position: relative;
-  display: inline-flex; 
+  display: inline-flex;
 }
