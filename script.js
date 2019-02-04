@@ -1,4 +1,8 @@
 const body = document.querySelector('body');
+const startButton = document.querySelector('#start');
+const tutorialButton = document.querySelector('#tutorial');
+const title = document.querySelector('.title')
+
 //player creation
 const createPlayer = () => {
   const player = document.querySelector('.player');
@@ -7,12 +11,6 @@ const createPlayer = () => {
   player.setAttribute ('id','player');
   player.style.left = '740px'
   return player;
-}
-const chooseColor = () => {
-
-}
-const chooseName = () => {
-
 }
 
 //player movement
@@ -28,4 +26,18 @@ const movePlayer = (ev) => {
   }
 }
 
-body.addEventListener('keydown', movePlayer)
+// start button initiates game start;
+const startGame = (ev) => {
+  startButton.style.display = 'none';
+  title.style.display = 'none';
+  tutorialButton.style.display = 'none';
+  createPlayer();
+  body.addEventListener('keydown', movePlayer);
+}
+
+//creates blocks that fall from the sky
+const generateBlocks = () => {
+  
+}
+
+startButton.addEventListener('click', startGame)

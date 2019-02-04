@@ -11,7 +11,7 @@ body {
   text-align: center;
   position: relative;
   animation-name: dropDown;
-  animation-duration: 4s;
+  animation-duration: 2s;
 }
 
 button {
@@ -26,6 +26,7 @@ button {
   box-shadow: 0px 0px 50px 0px #efb03b;
   background: #ed9728;
 }
+
 button:focus {
   ;
 }
@@ -37,12 +38,13 @@ button:hover {
 #start {
   top: 260px;
   animation-name: enterRight;
-  animation-duration: 4s;
+  animation-duration: 2s;
 }
+
 #tutorial {
   top: 400px;
   animation-name: enterLeft;
-  animation-duration: 4s;
+  animation-duration: 2s;
 }
 
 @keyframes dropDown {
@@ -70,10 +72,18 @@ button:hover {
   }
 }
 
+
 /* player related css */
 #player {
   height: 90px;
   width: 100px;
   position: relative;
-  top: 490px;
+  top: 700px;
+}
+
+/* smashy blocks */
+.blocks {
+  height: 30px;
+  width: 100px;
+  position: relative;
 }
