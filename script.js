@@ -4,6 +4,10 @@ const tutorialButton = document.querySelector('#tutorial');
 const title = document.querySelector('.title')
 const player = document.querySelector('.player');
 const tryAgain = document.querySelector('.tryAgain');
+const yesButton = document.querySelector('#yes')
+const noButton = document.querySelector('#no')
+let drop = 0
+let int
 
 //player creation
 const createPlayer = () => {
@@ -27,26 +31,28 @@ const movePlayer = (ev) => {
 
 //generates all blocks inline
 const generateBlocks = (block) => {
-  for (i=1; i<=1; i++) {
+  for (let i=1; i<=1; i++) {
     const block = document.createElement('div');
     block.classList.add('blocks');
     block.style.background = 'white';
     block.setAttribute('id', i);
     body.appendChild(block);
   }
+  return block
 }
 
 //collision detection functions
-  checkCollision = (block, playerPos, blockPos) => {
-    if (playerPos.bottom >= blockPos.bottom) {
-      if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right) {
-        if (playerPos.top <= blockPos.bottom) {
-          player.style.background = 'red';
-          youLose();
-        }
+checkCollision = (block, playerPos, blockPos) => {
+  if (playerPos.bottom >= blockPos.bottom) {
+    if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right) {
+      if (playerPos.top <= blockPos.bottom) {
+        player.style.background = 'red';
+        clearInterval(int);
+        youLose();
       }
     }
   }
+}
 
 //move blocks downwards
 const dropEm = () => {
@@ -54,20 +60,22 @@ const dropEm = () => {
   const block = document.querySelector('.blocks');
   const playerPos = player.getBoundingClientRect();
   const blockPos = block.getBoundingClientRect();
-  if (blockPos.bottom <= 850) {
-    for (j=0; j<1; j++) {
+ if (blockPos.bottom <= 850) {
+    for (let j=0; j<1; j++) {
       drop += 10;
-      for (i=0; i<1; i++) {
+      console.log(drop);
+      for (let i=0; i<1; i++) {
         blocks[i].style.top = `${drop}px`;
         checkCollision(block, playerPos, blockPos);
       }
     }
+  } else {
+    resetBlock()
   }
 }
 
-const moveBlocks = (num) => {
-  drop = num;
-  const setIt = setInterval(dropEm, 50);
+const moveBlocks = () => {
+  int = setInterval(dropEm, 50);
 }
 
 // start button initiates game start;
@@ -75,24 +83,50 @@ const startGame = () => {
   startButton.style.display = 'none';
   title.style.display = 'none';
   tutorialButton.style.display = 'none';
+  tryAgain.style.display = 'none';
+  yesButton.style.display = 'none';
+  noButton.style.display = 'none';
   createPlayer();
-  let num = 0;
   generateBlocks();
-  moveBlocks(num);
+  moveBlocks();
   body.addEventListener('keydown', movePlayer);
+}
+
+const reset = () => {
+  const block = document.querySelector('.blocks')
+  drop = 0;
+  block.remove();
+}
+
+const restartGame = () => {
+  reset()
+  startGame()
+}
+
+const resetBlock = () => {
+  reset()
+  generateBlocks()
 }
 
 // when loss conditions are met
 const youLose = () => {
-  const yesButton = document.querySelector('#yes')
-  const noButton = document.querySelector('#no')
-  const tryAgain = document.querySelector('.tryAgain');
   tryAgain.style.display = 'block';
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
+  yesButton.addEventListener('click', restartGame);
+  //TO DO
+  //noButton.addEventListener('click', backToMain);
 }
 
+startButton.addEventListener('click', startGame);
 
+//TO DO
 
-
-startButton.addEventListener('click', startGame)
+// const backToMain = () => {
+//   startButton.style.display = 'block';
+//   title.style.display = 'block';
+//   tutorialButton.style.display = 'block';
+//   tryAgain.style.display = 'none';
+//   yesButton.style.display = 'none';
+//   noButton.style.display = 'none';
+// }
