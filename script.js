@@ -9,19 +9,19 @@ const createPlayer = () => {
   player.style.background = 'blue';
   player.name = 'matt';
   player.setAttribute ('id','player');
-  player.style.left = '740px';
+  // player.style.left = '740px';
   return player;
 }
 
 //player movement
-let move = 700;
+let move = 800;
 const movePlayer = (ev) => {
   const player = document.querySelector('.player');
   if (ev.keyCode === 39 && move < 1490) { //rightArrow
-    move += 100;
+    move += 80;
     player.style.left = `${move}px`;
   } else if (ev.keyCode === 37 && move > 0) { //leftArrow
-    move -= 100;
+    move -= 80;
     player.style.left = `${move}px`;
   }
 }
@@ -38,10 +38,7 @@ const generateBlocks = (block) => {
 }
 
 //collision detection functions
-  checkCollision = () => {
-    const block = document.querySelector('.blocks');
-    const playerPos = player.getBoundingClientRect();
-    const blockPos = block.getBoundingClientRect();
+  checkCollision = (block, playerPos, blockPos) => {
     if (playerPos.bottom >= blockPos.bottom) {
       if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right) {
         if (playerPos.top <= blockPos.bottom) {
@@ -54,11 +51,16 @@ const generateBlocks = (block) => {
 //move blocks downwards
 const dropEm = () => {
   const blocks = document.querySelectorAll('.blocks');
-  for (j=0; j<1; j++) {
-    drop += 10;
-    for (i=0; i<1; i++) {
-      blocks[i].style.top = `${drop}px`;
-      checkCollision();
+  const block = document.querySelector('.blocks');
+  const playerPos = player.getBoundingClientRect();
+  const blockPos = block.getBoundingClientRect();
+  if (blockPos.bottom <= 850) {
+    for (j=0; j<1; j++) {
+      drop += 10;
+      for (i=0; i<1; i++) {
+        blocks[i].style.top = `${drop}px`;
+        checkCollision(block, playerPos, blockPos);
+      }
     }
   }
 }
@@ -69,7 +71,7 @@ const moveBlocks = (num) => {
 }
 
   // start button initiates game start;
-  const startGame = (ev) => {
+  const startGame = () => {
     startButton.style.display = 'none';
     title.style.display = 'none';
     tutorialButton.style.display = 'none';

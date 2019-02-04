@@ -75,16 +75,18 @@ button:hover {
 
 /* player related css */
 #player {
-  height: 90px;
-  width: 100px;
-  position: relative;
+  height: 100px;
+  width: 80px;
+  position: absolute;
   top: 700px;
+  left: 800px;
 }
 
 /* smashy blocks */
 .blocks {
   height: 30px;
-  width: 410px;
-  position: relative;
-  display: inline-flex;
+  width: 320px;
+  position: absolute;
+  /* display: inline-flex; */
+  left: 640px;
 }
