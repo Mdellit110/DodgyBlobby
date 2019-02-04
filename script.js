@@ -9,7 +9,7 @@ const createPlayer = () => {
   player.style.background = 'blue';
   player.name = 'matt';
   player.setAttribute ('id','player');
-  player.style.left = '740px'
+  player.style.left = '740px';
   return player;
 }
 
@@ -32,12 +32,28 @@ const startGame = (ev) => {
   title.style.display = 'none';
   tutorialButton.style.display = 'none';
   createPlayer();
+  generateBlocks();
   body.addEventListener('keydown', movePlayer);
 }
 
-//creates blocks that fall from the sky
-const generateBlocks = () => {
-  
+//creates a block that falls from the sky
+// const createBlock = () => {
+//   const block = document.createElement('div');
+//   block.classList.add('blocks');
+//   block.style.background = 'white';
+//   body.appendChild(block);
+//   return block;
+// }
+
+//generates all blocks inline
+const generateBlocks = (block) => {
+  for (i=1; i<=10; i++) {
+    const block = document.createElement('div');
+    block.classList.add('blocks');
+    block.style.background = 'white';
+    block.setAttribute('id', i);
+    body.appendChild(block);
+  }
 }
 
 startButton.addEventListener('click', startGame)

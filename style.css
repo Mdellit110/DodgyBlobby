@@ -86,4 +86,5 @@ button:hover {
   height: 30px;
   width: 100px;
   position: relative;
+  display: inline-flex; 
 }
