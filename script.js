@@ -35,6 +35,7 @@ const generateBlocks = (block) => {
     const block = document.createElement('div');
     block.classList.add('blocks');
     block.style.background = 'white';
+    block.style.left = `${randNum()}px`;
     block.setAttribute('id', i);
     body.appendChild(block);
   }
@@ -63,7 +64,6 @@ const dropEm = () => {
  if (blockPos.bottom <= 850) {
     for (let j=0; j<1; j++) {
       drop += 10;
-      console.log(drop);
       for (let i=0; i<1; i++) {
         blocks[i].style.top = `${drop}px`;
         checkCollision(block, playerPos, blockPos);
@@ -75,8 +75,14 @@ const dropEm = () => {
 }
 
 const moveBlocks = () => {
-  int = setInterval(dropEm, 50);
+  int = setInterval(dropEm, 10);
 }
+
+const randNum = () => {
+  return (Math.floor((Math.random() * 10) + 1)) * 80;
+}
+
+
 
 // start button initiates game start;
 const startGame = () => {
