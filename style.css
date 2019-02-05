@@ -1,6 +1,8 @@
 body {
-  background: #1f1915;
+/* got image from https://steamcommunity.com/sharedfiles/filedetails/?id=844946240 */
+  background-image: url('ESCAPEbackground.jpg');
   text-align: center;
+
 
 }
 .title {
@@ -47,6 +49,7 @@ button:hover {
   top: 550px;
   animation-name: enterLeft;
   animation-duration: 2s;
+  display: none;
 }
 
 #no {

@@ -127,7 +127,7 @@ const backToMain = () => {
   score = 0
   startButton.style.display = 'block';
   title.style.display = 'block';
-  tutorialButton.style.display = 'block';
+  //tutorialButton.style.display = 'block';
   tryAgain.style.display = 'none';
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
