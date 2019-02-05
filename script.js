@@ -7,6 +7,7 @@ const tryAgain = document.querySelector('.tryAgain');
 const yesButton = document.querySelector('#yes')
 const noButton = document.querySelector('#no')
 let drop = 0
+let score = 0
 let int
 
 //player creation
@@ -21,10 +22,10 @@ let move = 800;
 const movePlayer = (ev) => {
   const player = document.querySelector('.player');
   if (ev.keyCode === 39 && move < 1490) { //rightArrow
-    move += 80;
+    move += 50;
     player.style.left = `${move}px`;
   } else if (ev.keyCode === 37 && move > 0) { //leftArrow
-    move -= 80;
+    move -= 50;
     player.style.left = `${move}px`;
   }
 }
@@ -45,7 +46,7 @@ const generateBlocks = (block) => {
 //collision detection functions
 checkCollision = (block, playerPos, blockPos) => {
   if (playerPos.bottom >= blockPos.bottom) {
-    if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right) {
+    if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right || playerPos.right >= blockPos.left && playerPos.left <= blockPos.right) {
       if (playerPos.top <= blockPos.bottom) {
         player.style.background = 'red';
         clearInterval(int);
@@ -71,15 +72,17 @@ const dropEm = () => {
     }
   } else {
     resetBlock()
+    score += 10;
+    console.log(score);
   }
 }
 
 const moveBlocks = () => {
-  int = setInterval(dropEm, 10);
+  int = setInterval(dropEm, 15);
 }
 
 const randNum = () => {
-  return (Math.floor((Math.random() * 10) + 1)) * 80;
+  return (Math.floor((Math.random() * 10) + 1)) * 120;
 }
 
 
@@ -107,6 +110,7 @@ const reset = () => {
 const restartGame = () => {
   reset()
   startGame()
+  score = 0;
 }
 
 const resetBlock = () => {
