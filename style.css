@@ -1,6 +1,7 @@
 body {
   background: #1f1915;
   text-align: center;
+
 }
 .title {
   font-family: 'Bungee Shade', cursive;
@@ -17,7 +18,8 @@ body {
 button {
   width: 200px;
   height: 65px;
-  position: relative;
+  position: absolute;
+  left: 700px;
   border-radius: 10px;
   border: #1f1915;
   font-family: 'bungee', cursive;
@@ -36,15 +38,28 @@ button:hover {
 }
 
 #start {
-  top: 260px;
+  top: 425px;
   animation-name: enterRight;
   animation-duration: 2s;
 }
 
 #tutorial {
-  top: 400px;
+  top: 550px;
   animation-name: enterLeft;
   animation-duration: 2s;
+}
+
+#no {
+  display: none;
+  top: 400px;
+  left: 850px;
+
+}
+
+#yes {
+  display: none;
+  top: 400px;
+  left: 550px;
 }
 
 @keyframes dropDown {
@@ -85,31 +100,23 @@ button:hover {
   display: none;
 }
 
-#no {
-  display: none;
-  top: 400px;
-  left: 860px;
-}
-
-#yes {
-  display: none;
-  top: 462px;
-  left: 493px;
-}
-
 /* player related css */
-#player {
+.player {
   height: 100px;
   width: 50px;
   position: absolute;
   top: 700px;
   left: 800px;
+  background: #ed9711;
+  display: none;
   /* transition: all 0.05s ease-in; */
 
 }
 
 /* smashy blocks */
 .blocks {
+  background: #ed9711;
+  box-shadow: 0px 0px 50px 10px #efb03b;
   height: 30px;
   width: 400px;
   position: absolute;

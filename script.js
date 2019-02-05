@@ -4,57 +4,48 @@ const tutorialButton = document.querySelector('#tutorial');
 const title = document.querySelector('.title')
 const player = document.querySelector('.player');
 const tryAgain = document.querySelector('.tryAgain');
-const yesButton = document.querySelector('#yes')
-const noButton = document.querySelector('#no')
-let drop = 0
-let score = 0
-let int
-
-//player creation
-const createPlayer = () => {
-  player.style.background = 'blue';
-  player.name = 'matt';
-  player.setAttribute ('id','player');
-}
+const yesButton = document.querySelector('#yes');
+const noButton = document.querySelector('#no');
+let drop = 0;
+let score = 0;
+let int;
+let move = 800;
 
 //player movement
-let move = 800;
 const movePlayer = (ev) => {
-  const player = document.querySelector('.player');
-  if (ev.keyCode === 39 && move < 1490) { //rightArrow
+  if (ev.keyCode === 39 && player.getBoundingClientRect().right < 1600) { //rightArrow
     move += 50;
     player.style.left = `${move}px`;
   } else if (ev.keyCode === 37 && move > 0) { //leftArrow
     move -= 50;
     player.style.left = `${move}px`;
-  }
-}
+  };
+};
 
 //generates all blocks inline
 const generateBlocks = (block) => {
   for (let i=1; i<=1; i++) {
     const block = document.createElement('div');
     block.classList.add('blocks');
-    block.style.background = 'white';
+    block.style.background = '#ed9711';
     block.style.left = `${randNum()}px`;
     block.setAttribute('id', i);
     body.appendChild(block);
-  }
+  };
   return block
-}
+};
 
 //collision detection functions
 checkCollision = (block, playerPos, blockPos) => {
   if (playerPos.bottom >= blockPos.bottom) {
     if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right || playerPos.right >= blockPos.left && playerPos.left <= blockPos.right) {
       if (playerPos.top <= blockPos.bottom) {
-        player.style.background = 'red';
         clearInterval(int);
         youLose();
-      }
-    }
-  }
-}
+      };
+    };
+  };
+};
 
 //move blocks downwards
 const dropEm = () => {
@@ -68,22 +59,23 @@ const dropEm = () => {
       for (let i=0; i<1; i++) {
         blocks[i].style.top = `${drop}px`;
         checkCollision(block, playerPos, blockPos);
-      }
-    }
+      };
+    };
   } else {
     resetBlock()
     score += 10;
     console.log(score);
-  }
-}
+  };
+  return playerPos;
+};
 
 const moveBlocks = () => {
   int = setInterval(dropEm, 15);
-}
+};
 
 const randNum = () => {
   return (Math.floor((Math.random() * 10) + 1)) * 120;
-}
+};
 
 
 
@@ -95,28 +87,28 @@ const startGame = () => {
   tryAgain.style.display = 'none';
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
-  createPlayer();
+  player.style.display = 'block';
   generateBlocks();
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
-}
+};
 
 const reset = () => {
-  const block = document.querySelector('.blocks')
+  const block = document.querySelector('.blocks');
   drop = 0;
   block.remove();
-}
+};
 
 const restartGame = () => {
-  reset()
-  startGame()
+  startGame();
+  reset();
   score = 0;
-}
+};
 
 const resetBlock = () => {
-  reset()
-  generateBlocks()
-}
+  reset();
+  generateBlocks();
+};
 
 // when loss conditions are met
 const youLose = () => {
@@ -124,19 +116,20 @@ const youLose = () => {
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
   yesButton.addEventListener('click', restartGame);
-  //TO DO
-  //noButton.addEventListener('click', backToMain);
-}
+  noButton.addEventListener('click', backToMain);
+};
 
 startButton.addEventListener('click', startGame);
 
-//TO DO
 
-// const backToMain = () => {
-//   startButton.style.display = 'block';
-//   title.style.display = 'block';
-//   tutorialButton.style.display = 'block';
-//   tryAgain.style.display = 'none';
-//   yesButton.style.display = 'none';
-//   noButton.style.display = 'none';
-// }
+const backToMain = () => {
+  reset()
+  score = 0
+  startButton.style.display = 'block';
+  title.style.display = 'block';
+  tutorialButton.style.display = 'block';
+  tryAgain.style.display = 'none';
+  yesButton.style.display = 'none';
+  noButton.style.display = 'none';
+  player.style.display = 'none';
+}
