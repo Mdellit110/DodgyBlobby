@@ -10,6 +10,7 @@ const finalScore = document.querySelector('.finalScore');
 let drop = 0;
 let score = 0;
 let int;
+let blockMaker;
 let move = 800;
 
 //player movement
@@ -27,7 +28,7 @@ const movePlayer = (ev) => {
 //generates all blocks inline
 
 const generateBlocks = () => {
-  for (let i=1; i<=1; i++) {
+  for (let i=1; i<=3; i++) {
     const block = document.createElement('div');
     block.classList.add('blocks');
     block.style.background = '#ed9711';
@@ -38,7 +39,9 @@ const generateBlocks = () => {
 };
 
 //collision detection functions
-checkCollision = (block, playerPos, blockPos) => {
+checkCollision = (blocks, playerPos, blockPos, i) => {
+for (let i=0; i<3; i++) {
+  blockPos = blocks[i].getBoundingClientRect();
   if (playerPos.bottom >= blockPos.bottom) {
     if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right || playerPos.right >= blockPos.left && playerPos.left <= blockPos.right) {
       if (playerPos.top <= blockPos.bottom) {
@@ -47,6 +50,7 @@ checkCollision = (block, playerPos, blockPos) => {
       };
     };
   };
+};
 };
 
 //move blocks downwards
@@ -58,9 +62,10 @@ const dropEm = () => {
  if (blockPos.bottom <= 850) {
     for (let j=0; j<1; j++) {
       drop += 10;
-      for (let i=0; i<1; i++) {
-        blocks[i].style.top = `${drop}px`;
-        checkCollision(block, playerPos, blockPos);
+      for (let i=0; i<3; i++) {
+        const block = blocks[i];
+        block.style.top = `${drop}px`;
+        checkCollision(blocks, playerPos, blockPos);
       };
     };
   } else {
@@ -91,15 +96,17 @@ const startGame = () => {
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
-  generateBlocks();
+  blockMaker = setInterval(generateBlocks, 800);
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
 };
 
 const reset = () => {
-  const block = document.querySelector('.blocks');
+  const block = document.querySelectorAll('.blocks');
   drop = 0;
-  block.remove();
+  for (let i=0; i<3; i++) {
+    block[i].remove();
+  };
 };
 
 const restartGame = () => {
@@ -110,7 +117,6 @@ const restartGame = () => {
 
 const resetBlock = () => {
   reset();
-  generateBlocks();
 };
 
 // when loss conditions are met
@@ -120,6 +126,9 @@ const youLose = () => {
   noButton.style.display = 'block';
   finalScore.style.display = 'block';
   finalScore.innerText = `SCORE: ${score}`
+  console.log(blockMaker);
+  clearInterval(blockMaker);
+
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
 };
