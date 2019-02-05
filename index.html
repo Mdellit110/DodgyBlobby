@@ -10,16 +10,17 @@
   </head>
   <body class='body'>
     <!-- got audio from https://www.youtube.com/watch?v=_2AAR9jRc7I&t=40s -->
-    <audio src="caveSounds.mp3" autoplay></audio>
-    <section>
+    <audio src="caveSounds.mp3" controls></audio>
+    <section id="mainMenu">
       <div class="title">!ESCAPE!</div>
       <button type="button" id="start" name="start">START</button>
       <button type="button" id="tutorial" name="tutorial">TUTORIAL</button>
     </section>
-    <section>
+    <section id="loseMenu">
       <div class="tryAgain">TRY AGAIN</div>
       <button type="button" id="yes" name="yes">YES</button>
       <button type="button" id="no" name="no">NO</button>
+      <div class="finalScore">score:</div>
     </section>
     <div class="player"></div>
   </body>

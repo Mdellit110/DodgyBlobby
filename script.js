@@ -6,6 +6,7 @@ const player = document.querySelector('.player');
 const tryAgain = document.querySelector('.tryAgain');
 const yesButton = document.querySelector('#yes');
 const noButton = document.querySelector('#no');
+const finalScore = document.querySelector('.finalScore');
 let drop = 0;
 let score = 0;
 let int;
@@ -13,7 +14,7 @@ let move = 800;
 
 //player movement
 const movePlayer = (ev) => {
-  if (ev.keyCode === 39 && player.getBoundingClientRect().right < 1600) { //rightArrow
+  if (ev.keyCode === 39) { //rightArrow
     move += 50;
     player.style.left = `${move}px`;
   } else if (ev.keyCode === 37 && move > 0) { //leftArrow
@@ -74,7 +75,7 @@ const moveBlocks = () => {
 };
 
 const randNum = () => {
-  return (Math.floor((Math.random() * 10) + 1)) * 120;
+  return (Math.floor(Math.random() * 1200));
 };
 
 
@@ -88,6 +89,7 @@ const startGame = () => {
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
   player.style.display = 'block';
+  finalScore.style.display = 'none';
   generateBlocks();
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
@@ -115,6 +117,8 @@ const youLose = () => {
   tryAgain.style.display = 'block';
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
+  finalScore.style.display = 'block';
+  finalScore.innerText = `SCORE: ${score}`
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
 };
@@ -127,6 +131,7 @@ const backToMain = () => {
   score = 0
   startButton.style.display = 'block';
   title.style.display = 'block';
+  finalScore.style.display = 'none';
   //tutorialButton.style.display = 'block';
   tryAgain.style.display = 'none';
   yesButton.style.display = 'none';
