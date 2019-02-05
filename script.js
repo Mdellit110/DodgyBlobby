@@ -9,13 +9,14 @@ const noButton = document.querySelector('#no');
 const finalScore = document.querySelector('.finalScore');
 let drop = 0;
 let score = 0;
+let move = 600;
 let int;
 let blockMaker;
-let move = 800;
+
 
 //player movement
 const movePlayer = (ev) => {
-  if (ev.keyCode === 39) { //rightArrow
+  if (ev.keyCode === 39 && player.offsetLeft <= 1199) { //rightArrow
     move += 50;
     player.style.left = `${move}px`;
   } else if (ev.keyCode === 37 && move > 0) { //leftArrow
@@ -24,15 +25,14 @@ const movePlayer = (ev) => {
   };
 };
 
-
 //generates all blocks inline
 
 const generateBlocks = () => {
-  for (let i=1; i<=3; i++) {
+  for (let i=1; i<=10; i++) {
     const block = document.createElement('div');
     block.classList.add('blocks');
     block.style.background = '#ed9711';
-    block.style.left = `${randNum()}px`;
+    block.style.left = `${randOffLeft()}px`;
     block.dataset.blockId = i;
     body.appendChild(block);
   };
@@ -40,7 +40,7 @@ const generateBlocks = () => {
 
 //collision detection functions
 checkCollision = (blocks, playerPos, blockPos, i) => {
-for (let i=0; i<3; i++) {
+for (let i=0; i<blocks.length; i++) {
   blockPos = blocks[i].getBoundingClientRect();
   if (playerPos.bottom >= blockPos.bottom) {
     if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right || playerPos.right >= blockPos.left && playerPos.left <= blockPos.right) {
@@ -62,7 +62,7 @@ const dropEm = () => {
  if (blockPos.bottom <= 850) {
     for (let j=0; j<1; j++) {
       drop += 10;
-      for (let i=0; i<3; i++) {
+      for (let i=0; i<10; i++) {
         const block = blocks[i];
         block.style.top = `${drop}px`;
         checkCollision(blocks, playerPos, blockPos);
@@ -80,11 +80,13 @@ const moveBlocks = () => {
   int = setInterval(dropEm, 15);
 };
 
-const randNum = () => {
-  return (Math.floor(Math.random() * 1200));
+// number generators
+const randOffLeft = () => {
+  return (Math.floor(Math.random() * 1220));
 };
-
-
+const randomInterval = () => {
+  return (Math.floor(Math.random() * 1000));
+};
 
 // start button initiates game start;
 const startGame = () => {
@@ -104,7 +106,7 @@ const startGame = () => {
 const reset = () => {
   const block = document.querySelectorAll('.blocks');
   drop = 0;
-  for (let i=0; i<3; i++) {
+  for (let i=0; i<10; i++) {
     block[i].remove();
   };
 };

@@ -5,16 +5,15 @@ body {
 }
 .title {
   font-family: 'Bungee Shade', cursive;
-  font-size: 10em;
+  font-size: 7em;
   text-shadow: -5px 5px 50px #efb03b;
   color: #ed9711;
-  top: 140px;
+  top: 120px;
   text-align: center;
   position: relative;
   animation-name: dropDown;
   animation-duration: 2s;
 }
-
 button {
   width: 200px;
   height: 65px;
@@ -28,44 +27,36 @@ button {
   box-shadow: 0px 0px 50px 0px #efb03b;
   background: #ed9728;
 }
-
 button:focus {
   ;
 }
-
 button:hover {
   box-shadow: 0px 0px 50px 10px #efb03b;
 }
-
 #start {
   top: 425px;
+  left: 45%;
   animation-name: enterRight;
   animation-duration: 2s;
 }
-
 #tutorial {
   top: 550px;
   animation-name: enterLeft;
   animation-duration: 2s;
   display: none;
 }
-
 #no {
   display: none;
-  top: 400px;
-  left: 850px;
+  top: 320px;
+  left: 670px;
   animation: enterRight 1s;
-
 }
-
 #yes {
   display: none;
-  top: 400px;
-  left: 550px;
+  top: 320px;
+  left: 370px;
   animation: enterLeft 1s;
-
 }
-
 @keyframes dropDown {
   0% {
     transform: translateY(-400px);
@@ -98,14 +89,13 @@ button:hover {
     transform: translateX(0px);
   }
 }
-
 /* lose state */
 .tryAgain {
   font-family: 'Bungee Shade', cursive;
-  font-size: 10em;
+  font-size: 7em;
   text-shadow: -5px 5px 50px #efb03b;
   color: #ed9711;
-  top: 140px;
+  top: 70px;
   width: 100%;
   text-align: center;
   position: absolute;
@@ -119,7 +109,7 @@ font-size: 3em;
 text-shadow: -5px 5px 50px #efb03b;
 color: #ed9711;
 width: 100%;
-top: 550px;
+top: 230px;
 position: absolute;
 display: none;
 animation: enterBottom 1s;
@@ -130,8 +120,8 @@ animation: enterBottom 1s;
   height: 100px;
   width: 50px;
   position: absolute;
-  top: 700px;
-  left: 800px;
+  top: 550px;
+  left: 600px;
   background: #ed9711;
   display: none;
   /* transition: all 0.05s ease-in; */
@@ -140,10 +130,10 @@ animation: enterBottom 1s;
 
 /* smashy blocks */
 .blocks {
-  background: #ed9711;
+  background-image: url('fallyrock.png');
   box-shadow: 0px 0px 50px 10px #efb03b;
-  height: 30px;
-  width: 400px;
+  height: 100px;
+  width: 40px;
   position: absolute;
-  left: 640px;
+  top: -200px;
 }
