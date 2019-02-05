@@ -23,17 +23,18 @@ const movePlayer = (ev) => {
   };
 };
 
+
 //generates all blocks inline
-const generateBlocks = (block) => {
+
+const generateBlocks = () => {
   for (let i=1; i<=1; i++) {
     const block = document.createElement('div');
     block.classList.add('blocks');
     block.style.background = '#ed9711';
     block.style.left = `${randNum()}px`;
-    block.setAttribute('id', i);
+    block.dataset.blockId = i;
     body.appendChild(block);
   };
-  return block
 };
 
 //collision detection functions
