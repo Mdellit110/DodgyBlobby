@@ -29,47 +29,46 @@ const movePlayer = (ev) => {
 const generateBlocks = () => {
     const block = document.createElement('div');
     block.style.background = '#ed9711';
-    block.className = 'blocks'
+    block.className = 'block'
     block.style.left = `${randOffLeft(block)}px`;
     blocks.push(block);
     body.appendChild(block);
 
 };
 
-//collision detection functions
-checkCollision = () => {
-  for (let i = 0; i < blocks.length; i++) {
-      if (player.offsetLeft >= (blocks[i].offsetLeft + blocks[i].offsetWidth)
-      && (player.offsetLeft + player.offsetWidth) <= blocks[i].offsetLeft
-      && player.offsetTop <= (blocks[i].offsetTop + blocks[i].offsetHeight)) {
-          clearInterval(int);
-          resetBlock();
-          youLose();
+checkCollision = (i) => {
+  blockPos = blocks[i].getBoundingClientRect();
+  playerPos = player.getBoundingClientRect();
+  if (playerPos.bottom >= blockPos.bottom) {
+    if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right || playerPos.right >= blockPos.left && playerPos.left <= blockPos.right) {
+      if (playerPos.top <= blockPos.bottom) {
+        clearInterval(int);
+        youLose();
+      };
     };
+  } else {
+    score += 1;
   };
 };
 
 //move blocks downwards
 const dropEm = () => {
   for (let i=0; i<blocks.length; i++) {
-    checkCollision();
+    checkCollision(i);
     if ((blocks[i].offsetHeight + blocks[i].offsetTop) < window.innerWidth) {
         blocks[i].style.top =`${blocks[i].offsetTop + (window.innerHeight / 100)}px`;
     } else {
-      resetBlock()
-      score += 10;
+      resetBlock();
     };
   };
 };
 
-
 const moveBlocks = () => {
-  int = setInterval(dropEm, 20);
+  int = setInterval(dropEm, 18);
 };
 
 // number generators
-const randOffLeft = (block) => {
-
+const randOffLeft = () => {
   return (Math.floor(Math.random() * (window.innerWidth - 40)));
 };
 const randomInterval = () => {
@@ -86,7 +85,7 @@ const startGame = () => {
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
-  blockMaker = setInterval(generateBlocks, 200);
+  blockMaker = setInterval(generateBlocks, 170);
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
 };
@@ -95,13 +94,19 @@ const startGame = () => {
 
 const restartGame = () => {
   startGame();
-  reset();
-  resetBlock();
+  resetBlocks();
   score = 0;
 };
 
 const resetBlock = () => {
-  blocks.shift()
+  let firstBlock = blocks.shift();
+  firstBlock.parentNode.removeChild(firstBlock);
+}
+
+const resetBlocks = () => {
+  while (blocks.length > 0){
+    resetBlock();
+  }
 };
 
 // when loss conditions are met
@@ -113,10 +118,10 @@ const youLose = () => {
   finalScore.style.display = 'block';
   player.style.display = 'none';
   //blocks.style.display = 'none';
-  finalScore.innerText = `SCORE: ${score}`;
+  finalScore.innerText = `SCORE: ${Math.floor(score / 100)}`;
   console.log(blockMaker);
   clearInterval(blockMaker);
-
+  resetBlocks();
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
 };
@@ -125,7 +130,7 @@ startButton.addEventListener('click', startGame);
 
 
 const backToMain = () => {
-  reset()
+  resetBlocks();
   score = 0
   startButton.style.display = 'block';
   title.style.display = 'block';
