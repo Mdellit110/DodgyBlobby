@@ -7,21 +7,23 @@ const tryAgain = document.querySelector('.tryAgain');
 const yesButton = document.querySelector('#yes');
 const noButton = document.querySelector('#no');
 const finalScore = document.querySelector('.finalScore');
+let blocks;
 let drop = 0;
 let score = 0;
-let move = 600;
+let move = 50;
 let int;
 let blockMaker;
 
 
 //player movement
 const movePlayer = (ev) => {
-  if (ev.keyCode === 39 && player.offsetLeft <= 1199) { //rightArrow
-    move += 50;
-    player.style.left = `${move}px`;
+
+  if (ev.keyCode === 39 && player.offsetLeft <= document.body.clientWidth) { //rightArrow
+    move += 1;
+    player.style.left = `${move}%`;
   } else if (ev.keyCode === 37 && move > 0) { //leftArrow
-    move -= 50;
-    player.style.left = `${move}px`;
+    move -= 1;
+    player.style.left = `${move}%`;
   };
 };
 
@@ -32,7 +34,7 @@ const generateBlocks = () => {
     const block = document.createElement('div');
     block.classList.add('blocks');
     block.style.background = '#ed9711';
-    block.style.left = `${randOffLeft()}px`;
+    block.style.left = `${randOffLeft(block)}px`;
     block.dataset.blockId = i;
     body.appendChild(block);
   };
@@ -77,12 +79,12 @@ const dropEm = () => {
 };
 
 const moveBlocks = () => {
-  int = setInterval(dropEm, 15);
+  int = setInterval(dropEm, 20);
 };
 
 // number generators
-const randOffLeft = () => {
-  return (Math.floor(Math.random() * 1220));
+const randOffLeft = (block) => {
+  return (Math.floor(Math.random() * (document.body.clientWidth - 40)));
 };
 const randomInterval = () => {
   return (Math.floor(Math.random() * 1000));
@@ -98,15 +100,16 @@ const startGame = () => {
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
-  blockMaker = setInterval(generateBlocks, 800);
+  blockMaker = setInterval(generateBlocks, 700);
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
 };
 
 const reset = () => {
+
   const block = document.querySelectorAll('.blocks');
   drop = 0;
-  for (let i=0; i<10; i++) {
+  for (let i=0; i<block.length; i++) {
     block[i].remove();
   };
 };
@@ -123,11 +126,14 @@ const resetBlock = () => {
 
 // when loss conditions are met
 const youLose = () => {
+  //const blocks = document.querySelectorAll('.blocks');
   tryAgain.style.display = 'block';
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
   finalScore.style.display = 'block';
-  finalScore.innerText = `SCORE: ${score}`
+  player.style.display = 'none';
+  //blocks.style.display = 'none';
+  finalScore.innerText = `SCORE: ${score}`;
   console.log(blockMaker);
   clearInterval(blockMaker);
 

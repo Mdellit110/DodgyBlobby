@@ -2,30 +2,30 @@ html {
 /* got image from https://steamcommunity.com/sharedfiles/filedetails/?id=844946240 */
   background-image: url('ESCAPEbackground.jpg');
   text-align: center;
-  background-size: cover;
+  background-size: 100% auto;
   /* background-repeat: no-repeat; */
   /* background-position: center; */
 }
 .title {
   font-family: 'Bungee Shade', cursive;
-  font-size: 7em;
+  font-size: 19vmin;
   text-shadow: -5px 5px 50px #efb03b;
   color: #ed9711;
-  top: 120px;
+  top: 30%;
   text-align: center;
   position: relative;
   animation-name: dropDown;
   animation-duration: 2s;
 }
 button {
-  width: 120px;
-  height: 50px;
+  width: 25%;
+  height: 10%;
   position: absolute;
-  left: 700px;
+  /* left: 600px; */
   border-radius: 10px;
   border: #1f1915;
   font-family: 'bungee', cursive;
-  font-size: 2em;
+  font-size: 6vmin;
   color: #1f1915;
   box-shadow: 0px 0px 50px 0px #efb03b;
   background: #ed9728;
@@ -36,69 +36,69 @@ button:focus {
 button:hover {
   box-shadow: 0px 0px 50px 10px #efb03b;
 }
+.buttons
 #start {
-  top: 425px;
+  top: 60%;
   left: 45%;
   animation-name: enterRight;
   animation-duration: 2s;
 }
 #tutorial {
-  top: 550px;
+  top: 60%;
   animation-name: enterLeft;
   animation-duration: 2s;
   display: none;
 }
 #no {
   display: none;
-  top: 320px;
-  left: 670px;
+  top: 50%;
+  left: 65%;
   animation: enterRight 1s;
 }
 #yes {
   display: none;
-  top: 320px;
-  left: 470px;
+  top: 50%;
+  left: 35%;
   animation: enterLeft 1s;
 }
 @keyframes dropDown {
   0% {
-    transform: translateY(-400px);
+    transform: translateY(-200%);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0%);
   }
 }
 @keyframes enterBottom {
   0% {
-    transform: translateY(900px);
+    transform: translateY(700%);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0%);
   }
 }
 @keyframes enterLeft {
   0% {
-    transform: translateX(-1100px);
+    transform: translateX(700%);
   }
   100% {
-    transform: translateX(0px);
+    transform: translateX(0%);
   }
 }
 @keyframes enterRight {
   0% {
-    transform: translateX(1100px);
+    transform: translateX(700%);
   }
   100% {
-    transform: translateX(0px);
+    transform: translateX(0%);
   }
 }
 /* lose state */
 .tryAgain {
   font-family: 'Bungee Shade', cursive;
-  font-size: 7em;
+  font-size: 19vmin;
   text-shadow: -5px 5px 50px #efb03b;
   color: #ed9711;
-  top: 70px;
   width: 100%;
   text-align: center;
   position: absolute;
@@ -108,11 +108,11 @@ button:hover {
 
 .finalScore {
 font-family: 'Bungee Shade', cursive;
-font-size: 3em;
+font-size: 7vmin;
 text-shadow: -5px 5px 50px #efb03b;
 color: #ed9711;
 width: 100%;
-top: 230px;
+top: 36%;
 position: absolute;
 display: none;
 animation: enterBottom 1s;
@@ -120,11 +120,11 @@ animation: enterBottom 1s;
 
 /* player related css */
 .player {
-  height: 100px;
-  width: 50px;
+  height: 11%;
+  width: 3.1545741324921%;
   position: absolute;
-  top: 550px;
-  left: 600px;
+  top: 84%;
+  left: 50%;
   background: #ed9711;
   display: none;
   /* transition: all 0.05s ease-in; */
@@ -135,8 +135,8 @@ animation: enterBottom 1s;
 .blocks {
   background-image: url('fallyrock.png');
   box-shadow: 0px 0px 50px 10px #efb03b;
-  height: 100px;
-  width: 40px;
+  height: 11.600928074246%;
+  width: 2.5236593059937%;
   position: absolute;
-  top: -200px;
+  top: -500%;
 }
