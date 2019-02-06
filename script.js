@@ -46,21 +46,20 @@ checkCollision = (i) => {
         youLose();
       };
     };
-  } else {
-    score += 1;
   };
 };
-
 //move blocks downwards
 const dropEm = () => {
   for (let i=0; i<blocks.length; i++) {
     checkCollision(i);
-    if ((blocks[i].offsetHeight + blocks[i].offsetTop) < window.innerWidth) {
+    if ((blocks[i].offsetTop) < (window.innerHeight - blocks[i].offsetHeight)) {
         blocks[i].style.top =`${blocks[i].offsetTop + (window.innerHeight / 100)}px`;
     } else {
+      console.log('passed');
       resetBlock();
     };
   };
+  score += 1;
 };
 
 const moveBlocks = () => {
@@ -118,7 +117,7 @@ const youLose = () => {
   finalScore.style.display = 'block';
   player.style.display = 'none';
   //blocks.style.display = 'none';
-  finalScore.innerText = `SCORE: ${Math.floor(score / 100)}`;
+  finalScore.innerText = `SCORE: ${Math.floor(score)}`;
   console.log(blockMaker);
   clearInterval(blockMaker);
   resetBlocks();
