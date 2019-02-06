@@ -7,13 +7,11 @@ const tryAgain = document.querySelector('.tryAgain');
 const yesButton = document.querySelector('#yes');
 const noButton = document.querySelector('#no');
 const finalScore = document.querySelector('.finalScore');
-let blocks;
-let drop = 0;
+let blocks = [];
 let score = 0;
 let move = 50;
 let int;
 let blockMaker;
-
 
 //player movement
 const movePlayer = (ev) => {
@@ -28,55 +26,42 @@ const movePlayer = (ev) => {
 };
 
 //generates all blocks inline
-
 const generateBlocks = () => {
-  for (let i=1; i<=10; i++) {
     const block = document.createElement('div');
-    block.classList.add('blocks');
     block.style.background = '#ed9711';
+    block.className = 'blocks'
     block.style.left = `${randOffLeft(block)}px`;
-    block.dataset.blockId = i;
+    blocks.push(block);
     body.appendChild(block);
-  };
+
 };
 
 //collision detection functions
-checkCollision = (blocks, playerPos, blockPos, i) => {
-for (let i=0; i<blocks.length; i++) {
-  blockPos = blocks[i].getBoundingClientRect();
-  if (playerPos.bottom >= blockPos.bottom) {
-    if (playerPos.left >= blockPos.left && playerPos.right <= blockPos.right || playerPos.right >= blockPos.left && playerPos.left <= blockPos.right) {
-      if (playerPos.top <= blockPos.bottom) {
-        clearInterval(int);
-        youLose();
-      };
+checkCollision = () => {
+  for (let i = 0; i < blocks.length; i++) {
+      if (player.offsetLeft >= (blocks[i].offsetLeft + blocks[i].offsetWidth)
+      && (player.offsetLeft + player.offsetWidth) <= blocks[i].offsetLeft
+      && player.offsetTop <= (blocks[i].offsetTop + blocks[i].offsetHeight)) {
+          clearInterval(int);
+          resetBlock();
+          youLose();
     };
   };
-};
 };
 
 //move blocks downwards
 const dropEm = () => {
-  const blocks = document.querySelectorAll('.blocks');
-  const block = document.querySelector('.blocks');
-  const playerPos = player.getBoundingClientRect();
-  const blockPos = block.getBoundingClientRect();
- if (blockPos.bottom <= 850) {
-    for (let j=0; j<1; j++) {
-      drop += 10;
-      for (let i=0; i<10; i++) {
-        const block = blocks[i];
-        block.style.top = `${drop}px`;
-        checkCollision(blocks, playerPos, blockPos);
-      };
+  for (let i=0; i<blocks.length; i++) {
+    checkCollision();
+    if ((blocks[i].offsetHeight + blocks[i].offsetTop) < window.innerWidth) {
+        blocks[i].style.top =`${blocks[i].offsetTop + (window.innerHeight / 100)}px`;
+    } else {
+      resetBlock()
+      score += 10;
     };
-  } else {
-    resetBlock()
-    score += 10;
-    console.log(score);
   };
-  return playerPos;
 };
+
 
 const moveBlocks = () => {
   int = setInterval(dropEm, 20);
@@ -84,7 +69,8 @@ const moveBlocks = () => {
 
 // number generators
 const randOffLeft = (block) => {
-  return (Math.floor(Math.random() * (document.body.clientWidth - 40)));
+
+  return (Math.floor(Math.random() * (window.innerWidth - 40)));
 };
 const randomInterval = () => {
   return (Math.floor(Math.random() * 1000));
@@ -100,28 +86,22 @@ const startGame = () => {
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
-  blockMaker = setInterval(generateBlocks, 700);
+  blockMaker = setInterval(generateBlocks, 200);
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
 };
 
-const reset = () => {
 
-  const block = document.querySelectorAll('.blocks');
-  drop = 0;
-  for (let i=0; i<block.length; i++) {
-    block[i].remove();
-  };
-};
 
 const restartGame = () => {
   startGame();
   reset();
+  resetBlock();
   score = 0;
 };
 
 const resetBlock = () => {
-  reset();
+  blocks.shift()
 };
 
 // when loss conditions are met
