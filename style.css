@@ -1,7 +1,10 @@
-body {
+html {
 /* got image from https://steamcommunity.com/sharedfiles/filedetails/?id=844946240 */
   background-image: url('ESCAPEbackground.jpg');
   text-align: center;
+  background-size: cover;
+  /* background-repeat: no-repeat; */
+  /* background-position: center; */
 }
 .title {
   font-family: 'Bungee Shade', cursive;
@@ -15,8 +18,8 @@ body {
   animation-duration: 2s;
 }
 button {
-  width: 200px;
-  height: 65px;
+  width: 120px;
+  height: 50px;
   position: absolute;
   left: 700px;
   border-radius: 10px;
@@ -54,7 +57,7 @@ button:hover {
 #yes {
   display: none;
   top: 320px;
-  left: 370px;
+  left: 470px;
   animation: enterLeft 1s;
 }
 @keyframes dropDown {
