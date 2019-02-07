@@ -115,6 +115,7 @@ const restartGame = () => {
   startGame();
   resetBlocks();
   score = 0;
+  player.classList.remove('dead')
 };
 
 const resetBlock = () => {
@@ -135,7 +136,7 @@ const youLose = () => {
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
   finalScore.style.display = 'block';
-  player.style.display = 'none';
+  player.classList.add('dead')
   // blocks.style.display = 'none';
   finalScore.innerText = `SCORE: ${Math.floor(score)}`;
   console.log(blockMaker);
@@ -159,4 +160,5 @@ const backToMain = () => {
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
   player.style.display = 'none';
+  player.classList.remove('dead')
 }
