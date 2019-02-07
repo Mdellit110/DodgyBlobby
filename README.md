@@ -7,15 +7,10 @@ Use this section to describe your final project and perhaps any links to relevan
 
 the game will start on the main menu where the player will see the title have the option to start right away or look at the tutorial. One they press start they’ll be taken to the player creator where they can set the difficulty and choose the shape color and name their player. Once the game actually starts the player will see his avatar at the bottom center of the screen and will see a three second countdown to get them ready. after the timer runs out the players score will start going up based on how long they can avoid the falling blocks. The player has three lives and the game will end once all three lives are lost by the player colliding with one of the blocks three times. Next, the player will see their final score and the highest score so far. They will also have the option to change difficulty and try again or just go back the the main menu.
 
-## User Stories
-
-User story is a **description** of **objective**, which helps a person to achieve a feature. So that he able to utilize that feature when using software application. User story is a part of Agile development process.  
-[User Story Best Practices](https://github.com/beeva/beeva-best-practices/blob/master/agile/userStories/README.md)  
-
 ## Wireframes
 
 Upload images of wireframe to cloudinary or Google Drive and add the link here with a description of the specific wireframe.
-
+link to wireframes and pixel images:
 https://drive.google.com/drive/folders/1Miz9uBLWfPv8QBKBI1SVmxnT7lmiBUJ8?usp=sharing
 
 ### MVP/PostMVP - 5min
@@ -42,6 +37,7 @@ post-MVP:
 	* add ability to store high score
 	* 3 second timer to initiate rocks falling when you press start to give the player some time to get ready
 	* varying difficulties
+	* add the whole blobby family as playable characters DLC
 	* more stuff
 
 ## Code Snippet
@@ -85,4 +81,9 @@ const movingPlayer = () => {
   player.style.left = `${move}%`;
   window.requestAnimationFrame(movingPlayer);
 }
-window.requestAnimationFrame(movingPlayer);```
+window.requestAnimationFrame(movingPlayer);
+```
+## to-do bug fixes
+
+fix pac-man logic on movement-
+ i noticed theres a small bug that you run into when you let go of the arrow while mid left wall it locks your movement to always go left, but it does not happen every time and i cant seem to force recreate it. i plan on starting the debugging process by looking more into the requestAnimationFrame function and understanding exactly how it creates the smooth movements.

@@ -1,14 +1,16 @@
-html {
-/* got image from https://steamcommunity.com/sharedfiles/filedetails/?id=844946240 */
-  background-image: url('ESCAPEbackground.jpg');
-  text-align: center;
-  background-size: 100% auto;
-  /* background-repeat: no-repeat; */
-  /* background-position: center; */
-}
+/* background stuff */
 body {
+  background-image: url('ESCAPEbackground.jpg');/* got image from https://steamcommunity.com/sharedfiles/filedetails/?id=844946240 */
+  text-align: center;
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-origin: border-box;
   overflow: hidden;
+  height: 100vh;
 }
+
+/* main menu */
 .title {
   font-family: 'Bungee Shade', cursive;
   font-size: 14vmin;
@@ -19,11 +21,25 @@ body {
   animation-name: dropDown;
   animation-duration: 2s;
 }
+
+/* lose state */
+.tryAgain {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 19vmin;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  display: none;
+  animation: dropDown 1s;
+}
+
+/* button stuff */
 button {
   width: 25%;
   height: 10%;
   position: absolute;
-  /* left: 600px; */
   border-radius: 10px;
   border: #1f1915;
   font-family: 'bungee', cursive;
@@ -47,7 +63,6 @@ button:active {
   display: flex;
   flex: auto;
 }
-
 #start {
   top: 52%;
   left: 37%;
@@ -72,51 +87,8 @@ button:active {
   left: 22%;
   animation: enterLeft 1s;
 }
-@keyframes dropDown {
-  0% {
-    transform: translateY(-200%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-@keyframes enterBottom {
-  0% {
-    transform: translateY(700%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-@keyframes enterLeft {
-  0% {
-    transform: translateX(700%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
-}
-@keyframes enterRight {
-  0% {
-    transform: translateX(700%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
-}
-/* lose state */
-.tryAgain {
-  font-family: 'Bungee Shade', cursive;
-  font-size: 19vmin;
-  text-shadow: -5px 5px 50px #efb03b;
-  color: #ed9711;
-  width: 100%;
-  text-align: center;
-  position: absolute;
-  display: none;
-  animation: dropDown 1s;
-}
 
+/* scoring */
 .finalScore {
 font-family: 'Bungee Shade', cursive;
 font-size: 7vmin;
@@ -129,7 +101,8 @@ display: none;
 animation: enterBottom 1s;
 }
 
-/* player related css */
+/* BLOBBY the rock dodging blob */
+/* player states */
 .player {
   background: url('blobStates/bloby2.png');
   background-repeat: no-repeat;
@@ -142,7 +115,6 @@ animation: enterBottom 1s;
   left: 50%;
   display: none;
   animation: enterLeft .5s;
-  /* transition: all 0.05s ease-in; */
 }
 .player.goLeft {
   background: url('blobStates/bloby0.png');
@@ -192,13 +164,9 @@ animation: enterBottom 1s;
   left: 50%;
   display: block;
 }
-/* smashy blocks */
 
+/* rocks */
 .block {
-  /* background: url('ESCAPEbackground.jpg');
-  background-position: top;
-  background-repeat: no-repeat; */
-  /* background-position: center; */
   background: #f48f2d;
   box-shadow: 0px 0px 100px 2px #efb03b;
   height: 11.600928074246%;
@@ -206,4 +174,38 @@ animation: enterBottom 1s;
   position: absolute;
   top: 0%;
   z-index: -1;
+}
+
+/* animations */
+@keyframes dropDown {
+  0% {
+    transform: translateY(-200%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+@keyframes enterBottom {
+  0% {
+    transform: translateY(700%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+@keyframes enterLeft {
+  0% {
+    transform: translateX(700%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+@keyframes enterRight {
+  0% {
+    transform: translateX(700%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
 }
