@@ -136,6 +136,7 @@ animation: enterBottom 1s;
   top: 84%;
   left: 50%;
   display: none;
+  animation: enterLeft .5s;
   /* transition: all 0.05s ease-in; */
 }
 .player.goLeft {
@@ -198,4 +199,5 @@ animation: enterBottom 1s;
   width: 2%;
   position: absolute;
   top: 0%;
+  z-index: -1;
 }

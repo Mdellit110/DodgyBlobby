@@ -14,6 +14,8 @@ let int;
 let blockMaker;
 let left = false;
 let right = false;
+let startMove
+let stopMove
 
 //player movement
 const movePlayer = (ev) => {
@@ -54,7 +56,6 @@ window.requestAnimationFrame(movingPlayer);
 //generates all blocks inline
 const generateBlocks = () => {
     const block = document.createElement('div');
-    // block.style.background = '#ed9711';
     block.className = 'block'
     block.style.left = `${randOffLeft(block)}px`;
     blocks.push(block);
@@ -77,16 +78,14 @@ checkCollision = (i) => {
 const dropEm = () => {
   for (let i=0; i<blocks.length; i++) {
     checkCollision(i);
-    if ((blocks[i].offsetTop) < (window.innerHeight - blocks[i].offsetHeight)) {
+    if (blocks[i] !== undefined && (blocks[i].offsetTop) < (window.innerHeight - blocks[i].offsetHeight)) {
         blocks[i].style.top =`${blocks[i].offsetTop + (window.innerHeight / 100)}px`;
     } else {
-      console.log('passed');
       resetBlock();
     };
   };
   score += 1;
 };
-
 const moveBlocks = () => {
   int = setInterval(dropEm, 18);
 };
@@ -111,11 +110,9 @@ const startGame = () => {
   finalScore.style.display = 'none';
   blockMaker = setInterval(generateBlocks, 130);
   moveBlocks();
-  body.addEventListener('keydown', movePlayer);
-  body.addEventListener('keyup', unMovePlayer);
+  startMove = body.addEventListener('keydown', movePlayer, true);
+  stopMove = body.addEventListener('keyup', unMovePlayer, true);
 };
-
-
 
 const restartGame = () => {
   startGame();
@@ -125,29 +122,27 @@ const restartGame = () => {
 };
 
 const resetBlock = () => {
-  let firstBlock = blocks.shift();
-  firstBlock.parentNode.removeChild(firstBlock);
-}
+    let firstBlock = blocks.shift();
+    firstBlock.parentNode.removeChild(firstBlock);
+};
 
 const resetBlocks = () => {
-  while (blocks.length > 0){
+  while (blocks.length > 1){
     resetBlock();
   }
 };
 
 // when loss conditions are met
 const youLose = () => {
-  //const blocks = document.querySelectorAll('.blocks');
   tryAgain.style.display = 'block';
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
   finalScore.style.display = 'block';
   player.classList.add('dead')
-  // blocks.style.display = 'none';
   finalScore.innerText = `SCORE: ${Math.floor(score)}`;
-  console.log(blockMaker);
   clearInterval(blockMaker);
-  resetBlocks();
+  body.removeEventListener('keydown', movePlayer, true);
+  body.removeEventListener('keyup', unMovePlayer, true);
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
 };
@@ -161,7 +156,6 @@ const backToMain = () => {
   startButton.style.display = 'block';
   title.style.display = 'block';
   finalScore.style.display = 'none';
-  //tutorialButton.style.display = 'block';
   tryAgain.style.display = 'none';
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
