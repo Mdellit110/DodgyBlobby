@@ -167,9 +167,10 @@ animation: enterBottom 1s;
 
 /* rocks */
 .block {
-  background: #f48f2d;
+  background: #0b9861;
+  border-radius: 5px;
   box-shadow: 0px 0px 100px 2px #efb03b;
-  height: 11.600928074246%;
+  height: 6%;
   width: 2%;
   position: absolute;
   top: 0%;
