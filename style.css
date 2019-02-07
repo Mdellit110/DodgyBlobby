@@ -33,10 +33,15 @@ button {
   background: #ed9728;
 }
 button:focus {
-  ;
+  box-shadow: 0px 0px 50px 10px #efb03b;
+  outline: none;
 }
 button:hover {
   box-shadow: 0px 0px 50px 10px #efb03b;
+  outline: none;
+}
+button:active {
+  background: #A85F00;
 }
 .buttons {
   display: flex;
