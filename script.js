@@ -14,8 +14,7 @@ let int;
 let blockMaker;
 let left = false;
 let right = false;
-let startMove
-let stopMove
+
 
 //player movement
 const movePlayer = (ev) => {
@@ -108,10 +107,10 @@ const startGame = () => {
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
-  blockMaker = setInterval(generateBlocks, 130);
+  blockMaker = setInterval(generateBlocks, 90);
   moveBlocks();
-  startMove = body.addEventListener('keydown', movePlayer, true);
-  stopMove = body.addEventListener('keyup', unMovePlayer, true);
+  body.addEventListener('keydown', movePlayer, true);
+  body.addEventListener('keyup', unMovePlayer, true);
 };
 
 const restartGame = () => {
@@ -142,7 +141,6 @@ const youLose = () => {
   finalScore.innerText = `SCORE: ${Math.floor(score)}`;
   clearInterval(blockMaker);
   body.removeEventListener('keydown', movePlayer, true);
-  body.removeEventListener('keyup', unMovePlayer, true);
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
 };

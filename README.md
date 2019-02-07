@@ -18,10 +18,6 @@ Upload images of wireframe to cloudinary or Google Drive and add the link here w
 
 https://drive.google.com/drive/folders/1Miz9uBLWfPv8QBKBI1SVmxnT7lmiBUJ8?usp=sharing
 
-## Priority Matrix
-
-Include a full list of features that have been prioritized based on the `Time and Importance` Matix.  
-
 ### MVP/PostMVP - 5min
 
 The functionality will then be divided into two separate lists: MVP and PostMVP.  Carefully decided what is placed into your MVP as the client will expect this functionality to be implemented upon project completion.  
@@ -29,15 +25,64 @@ The functionality will then be divided into two separate lists: MVP and PostMVP.
 MVP and how I plan to solve it:
 	I think the biggest problem ill face will be implementing the collision detection and understanding how that works. I plan on watching some instructional videos on the YouTubes. I also plan to make the collision detection my MVP and start with just focusing on getting one block to detect collision with my player model then expand from there implementing the randomly generated blocks that will fall from off the top of the screen. i am also going to hold off on the option to change character shape till the end because I’m pretty sure the collision detection formula differentiates based on the shapes that are colliding. If I can get the basic game working with just one difficulty and the lives system then I will try to add the rest of the features like the scoreboard and pausing features and ability the change shape of your player.
 
-
-## Additional Libraries
- Use this section to list all supporting libraries and thier role in the project.
+MVP:
+	* collision detection
+	* blocks fall smoothly
+	* movable character
+	* score displayed on lose screen
+post-MVP:
+	* randomly generated blocks falling
+	* smooth moving character with pac-man like off screen moving skills
+	* added background
+	* animated titles and buttons
+	* re-playability
+	* create character and add to player block
+	* make blocks looks like rocks falling
+	* add an origin story for BLOBBY
+	* add ability to store high score
+	* 3 second timer to initiate rocks falling when you press start to give the player some time to get ready
+	* varying difficulties
+	* more stuff
 
 ## Code Snippet
 
-Use this section to include a brief code snippet of functionality that you are proud of an a brief description  
+Use this section to include a brief code snippet of functionality that you are proud of an a brief description
 
-```
-function reverse(string) {
-	// here is the code to reverse a string of text
+i chose to show my player movement functionality because compared to how i was doing it originally its a much smoother look to the movement, i also am very proud of my solution to the going off screen problem by giving him the appearance of going off one side and coming back on the other like pac-man.
+
+```player movement
+const movePlayer = (ev) => {
+  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
+    right = true;
+    player.classList.add('goRight')
+  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
+    left = true;
+    player.classList.add('goLeft')
+  };
+};
+const unMovePlayer = (ev) => {
+  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
+    right = false;
+    player.classList.remove('goRight')
+  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
+    left = false;
+    player.classList.remove('goLeft')
+  };
+};
+
+const movingPlayer = () => {
+  if (left){
+    if (player.offsetLeft <= 0) {
+    move = 100;
+    }
+    move -= 1;
+  } else if (right){
+    if (player.offsetLeft >= window.innerWidth - player.offsetWidth) {
+    move = 1;
+    }
+    move += 1;
+  };
+  player.style.left = `${move}%`;
+  window.requestAnimationFrame(movingPlayer);
 }
+window.requestAnimationFrame(movingPlayer);```
