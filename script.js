@@ -12,28 +12,47 @@ let score = 0;
 let move = 50;
 let int;
 let blockMaker;
+let left = false;
+let right = false;
 
 //player movement
 const movePlayer = (ev) => {
-
-  if (ev.keyCode === 39 && player.offsetLeft <= document.body.clientWidth) { //rightArrow
-    move += 1;
-    player.style.left = `${move}%`;
-  } else if (ev.keyCode === 37 && move > 0) { //leftArrow
-    move -= 1;
-    player.style.left = `${move}%`;
+  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
+    right = true;
+    player.classList.add('goRight')
+  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
+    left = true;
+    player.classList.add('goLeft')
+  };
+};
+const unMovePlayer = (ev) => {
+  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
+    right = false;
+    player.classList.remove('goRight')
+  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
+    left = false;
+    player.classList.remove('goLeft')
   };
 };
 
+const movingPlayer = () => {
+  if (left){
+    move -= 1;
+  } else if (right){
+    move += 1;
+  };
+  player.style.left = `${move}%`;
+  window.requestAnimationFrame(movingPlayer);
+}
+window.requestAnimationFrame(movingPlayer);
 //generates all blocks inline
 const generateBlocks = () => {
     const block = document.createElement('div');
-    block.style.background = '#ed9711';
+    // block.style.background = '#ed9711';
     block.className = 'block'
     block.style.left = `${randOffLeft(block)}px`;
     blocks.push(block);
     body.appendChild(block);
-
 };
 
 checkCollision = (i) => {
@@ -84,9 +103,10 @@ const startGame = () => {
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
-  blockMaker = setInterval(generateBlocks, 170);
+  blockMaker = setInterval(generateBlocks, 130);
   moveBlocks();
   body.addEventListener('keydown', movePlayer);
+  body.addEventListener('keyup', unMovePlayer);
 };
 
 
@@ -116,7 +136,7 @@ const youLose = () => {
   noButton.style.display = 'block';
   finalScore.style.display = 'block';
   player.style.display = 'none';
-  //blocks.style.display = 'none';
+  // blocks.style.display = 'none';
   finalScore.innerText = `SCORE: ${Math.floor(score)}`;
   console.log(blockMaker);
   clearInterval(blockMaker);

@@ -8,10 +8,9 @@ html {
 }
 .title {
   font-family: 'Bungee Shade', cursive;
-  font-size: 19vmin;
+  font-size: 14vmin;
   text-shadow: -5px 5px 50px #efb03b;
   color: #ed9711;
-  top: 30%;
   text-align: center;
   position: relative;
   animation-name: dropDown;
@@ -124,25 +123,63 @@ animation: enterBottom 1s;
 
 /* player related css */
 .player {
-  height: 11%;
-  width: 3.1545741324921%;
+  background: url('blobStates/bloby2.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  height: 13.533834586466165%;
+  width: 7.03125%;
   position: absolute;
   top: 84%;
   left: 50%;
-  background: #ed9711;
   display: none;
   /* transition: all 0.05s ease-in; */
-
 }
-
+.player.goLeft {
+  background: url('blobStates/bloby0.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  height: 13.533834586466165%;
+  width: 7.03125%;
+  position: absolute;
+  top: 84%;
+  left: 50%;
+  display: block;
+}
+.player.still {
+  background: url('blobStates/bloby0.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  height: 13.533834586466165%;
+  width: 7.03125%;
+  position: absolute;
+  top: 84%;
+  left: 50%;
+  display: block;
+}
+.player.goRight {
+  background: url('blobStates/bloby1.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  height: 13.533834586466165%;
+  width: 7.03125%;
+  position: absolute;
+  top: 84%;
+  left: 50%;
+  display: block;
+}
 /* smashy blocks */
 .block {
-  /* background-image: url('./fallyrock.png');
-  background-repeat: no-repeat;
-  background-size: contain; */
-  box-shadow: 0px 0px 50px 10px #efb03b;
+  background: url('ESCAPEbackground.jpg');
+  background-position: top;
+  /* background-repeat: no-repeat; */
+  /* background-position: center; */
+  box-shadow: 0px 0px 50px 6px #efb03b;
   height: 11.600928074246%;
-  width: 2.5236593059937%;
+  width: 2%;
   position: absolute;
   top: 0%;
 }
