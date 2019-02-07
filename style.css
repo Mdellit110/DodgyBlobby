@@ -195,10 +195,11 @@ animation: enterBottom 1s;
 /* smashy blocks */
 
 .block {
-  background: url('ESCAPEbackground.jpg');
+  /* background: url('ESCAPEbackground.jpg');
   background-position: top;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
   /* background-position: center; */
+  background: #ed9711;
   box-shadow: 0px 0px 100px 2px #efb03b;
   height: 11.600928074246%;
   width: 2%;
