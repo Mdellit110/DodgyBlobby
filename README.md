@@ -19,7 +19,7 @@ The functionality will then be divided into two separate lists: MVP and PostMVP.
 
 MVP and how I plan to solve it:
 	I think the biggest problem ill face will be implementing the collision detection and understanding how that works. I plan on watching some instructional videos on the YouTubes. I also plan to make the collision detection my MVP and start with just focusing on getting one block to detect collision with my player model then expand from there implementing the randomly generated blocks that will fall from off the top of the screen. i am also going to hold off on the option to change character shape till the end because I’m pretty sure the collision detection formula differentiates based on the shapes that are colliding. If I can get the basic game working with just one difficulty and the lives system then I will try to add the rest of the features like the scoreboard and pausing features and ability the change shape of your player.
-
+```
 MVP:
 	* collision detection
 	* blocks fall smoothly
@@ -39,7 +39,7 @@ post-MVP:
 	* varying difficulties
 	* add the whole blobby family as playable characters DLC
 	* more stuff
-
+```
 ## Code Snippet
 
 Use this section to include a brief code snippet of functionality that you are proud of an a brief description

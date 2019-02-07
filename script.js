@@ -1,14 +1,3 @@
-// index by lines:
-//   12-28: global variables
-//   31-64: player movement
-//   66-73: rock creator
-//   75-87: collision detection
-//   89-100: rock dropper
-//   102-105: number generator
-//   107-116: reset functions
-//   118-162: game states
-
-
 // global variables
 const body = document.querySelector('body');
 const startButton = document.querySelector('#start');
@@ -26,7 +15,6 @@ let int; //name of dropEm interval
 let blockMaker; //name of generateBlocks interval
 let left = false; // player moves left when true
 let right = false; // player moves right when true
-
 
 //player movement
 const movePlayer = (ev) => { // initiates movements left/right
