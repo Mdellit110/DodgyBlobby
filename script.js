@@ -37,8 +37,14 @@ const unMovePlayer = (ev) => {
 
 const movingPlayer = () => {
   if (left){
+    if (player.offsetLeft <= 0) {
+    move = 100;
+    }
     move -= 1;
   } else if (right){
+    if (player.offsetLeft >= window.innerWidth - player.offsetWidth) {
+    move = 1;
+    }
     move += 1;
   };
   player.style.left = `${move}%`;
