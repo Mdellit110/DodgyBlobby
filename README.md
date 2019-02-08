@@ -62,7 +62,3 @@ const moveBlobby = () => {
   player.style.left = `${move}%`;
 };
 ```
-## to-do bug fixes
-
-fix pac-man logic on movement-
- i noticed theres a small bug that you run into when you let go of the arrow while mid left wall it locks your movement to always go left, but it does not happen every time and i cant seem to force recreate it. i plan on starting the debugging process by looking more into the requestAnimationFrame function and understanding exactly how it creates the smooth movements.
