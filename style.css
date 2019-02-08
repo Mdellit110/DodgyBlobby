@@ -69,12 +69,6 @@ button:active {
   animation-name: enterRight;
   animation-duration: 2s;
 }
-#tutorial {
-  top: 60%;
-  animation-name: enterLeft;
-  animation-duration: 2s;
-  display: none;
-}
 #no {
   display: none;
   top: 50%;
