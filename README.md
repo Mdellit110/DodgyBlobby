@@ -44,44 +44,23 @@ post-MVP:
 
 Use this section to include a brief code snippet of functionality that you are proud of an a brief description
 
-i chose to show my player movement functionality because compared to how i was doing it originally its a much smoother look to the movement, i also am very proud of my solution to the going off screen problem by giving him the appearance of going off one side and coming back on the other like pac-man.
+i chose to show my player movement functionality because it works like pac man how when you run blobby off either side he reappears on the opposite side in the smoothest way i could make it. its also scalable to all screen sizes. how it works is before moveBlobby adds a percent to the movement in either direction it checks to see, in lefts case, if move is equal to the left edge of the map plus the width of the player and sets move to 100. for the right side it does the inverse.
 
-```player movement
-const movePlayer = (ev) => {
-  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
-    right = true;
-    player.classList.add('goRight')
-  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
-    left = true;
-    player.classList.add('goLeft')
-  };
-};
-const unMovePlayer = (ev) => {
-  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
-    right = false;
-    player.classList.remove('goRight')
-  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
-    left = false;
-    player.classList.remove('goLeft')
-  };
-};
-
-const movingPlayer = () => {
+```
+const moveBlobby = () => {
   if (left){
-    if (player.offsetLeft <= 0) {
+    if (move <= -7.03125) { //if player hits left wall moves him to right wall
     move = 100;
     }
     move -= 1;
   } else if (right){
-    if (player.offsetLeft >= window.innerWidth - player.offsetWidth) {
-    move = 1;
+    if (move >= 100) { //if player hits right wall moves him to left wall
+    move = -7.03125;
     }
     move += 1;
   };
   player.style.left = `${move}%`;
-  window.requestAnimationFrame(movingPlayer);
-}
-window.requestAnimationFrame(movingPlayer);
+};
 ```
 ## to-do bug fixes
 
