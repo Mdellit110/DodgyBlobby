@@ -21,21 +21,21 @@ let rate = 11;// sets rate of generateBlocks
 //keybindings
   //player movement
 const movePlayer = (ev) => { // initiates movements left/right
-  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
+  if (ev.keyCode === 39) { //rightArrow
     right = true;
     playing = true;
     player.classList.add('goRight')
-  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
+  } else if (ev.keyCode === 37) { //leftArrow
     left = true;
     playing = true;
     player.classList.add('goLeft')
   };
 };
 const unMovePlayer = (ev) => { // stops movement left/right
-  if (ev.keyCode === 39 && player.offsetLeft <= (document.body.clientWidth - 10)) { //rightArrow
+  if (ev.keyCode === 39) { //rightArrow
     right = false;
     player.classList.remove('goRight')
-  } else if (ev.keyCode === 37 && move > 1) { //leftArrow
+  } else if (ev.keyCode === 37) { //leftArrow
     left = false;
     player.classList.remove('goLeft')
   };
@@ -68,13 +68,13 @@ const checkCollision = (i) => { //would like to refine this for a more accurate 
 // moves blobby
 const moveBlobby = () => {
   if (left){
-    if (player.offsetLeft <= 0) { //if player hits left wall moves him to right wall
+    if (move <= -7.03125) { //if player hits left wall moves him to right wall
     move = 100;
     }
     move -= 1;
   } else if (right){
-    if (player.offsetLeft >= window.innerWidth - player.offsetWidth) { //if player hits right wall moves him to left wall
-    move = 1;
+    if (move >= 100) { //if player hits right wall moves him to left wall
+    move = -7.03125;
     }
     move += 1;
   };
