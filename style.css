@@ -94,6 +94,15 @@ position: absolute;
 display: none;
 animation: enterBottom 1s;
 }
+.currentScore {
+font-family: 'Bungee Shade', cursive;
+font-size: 3vmin;
+text-shadow: -5px 5px 50px #efb03b;
+color: #ed9711;
+position: absolute;
+display: none;
+animation: enterBottom 1s;
+}
 
 /* BLOBBY the rock dodging blob */
 /* player states */

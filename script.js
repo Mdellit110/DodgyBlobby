@@ -7,6 +7,7 @@ const tryAgain = document.querySelector('.tryAgain');
 const yesButton = document.querySelector('#yes');
 const noButton = document.querySelector('#no');
 const finalScore = document.querySelector('.finalScore');
+const currentScore = document.querySelector('.currentScore');
 let blocks = [];
 let score = 0;
 let gameTime;
@@ -68,13 +69,13 @@ const checkCollision = (i) => { //would like to refine this for a more accurate 
 // moves blobby
 const moveBlobby = () => {
   if (left){
-    if (move <= -7.03125) { //if player hits left wall moves him to right wall
-    move = 100;
+    if (move <= -2) { //if player hits left wall moves him to right wall
+    move = 98;
     }
     move -= 1;
   } else if (right){
-    if (move >= 100) { //if player hits right wall moves him to left wall
-    move = -7.03125;
+    if (move >= 98) { //if player hits right wall moves him to left wall
+    move = -2;
     }
     move += 1;
   };
@@ -104,6 +105,7 @@ const speedUp = () => {
   if (rate % 800 === 0) {
     rate -= 1;
   }
+  currentScore.innerText = `SCORE: ${Math.floor(score)}`;
 };
 
 const movingParts = () => {
@@ -139,6 +141,7 @@ const startGame = () => { //when you hit start button on main page
   noButton.style.display = 'none';
   player.style.display = 'block';
   finalScore.style.display = 'none';
+  currentScore.style.display = 'block';
   body.addEventListener('keydown', movePlayer, true);
   body.addEventListener('keyup', unMovePlayer, true);
 };
@@ -150,6 +153,7 @@ const youLose = () => { // brings up try again when you get hit
   finalScore.style.display = 'block';
   player.classList.add('dead')
   finalScore.innerText = `SCORE: ${Math.floor(score)}`;
+  currentScore.style.display = 'none';
   body.removeEventListener('keydown', movePlayer, true);
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
@@ -170,6 +174,7 @@ const backToMain = () => { //when you hit no button on lose state
   startButton.style.display = 'block';
   title.style.display = 'block';
   finalScore.style.display = 'none';
+  currentScore.style.display = 'none';
   tryAgain.style.display = 'none';
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
