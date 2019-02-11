@@ -98,16 +98,17 @@ const dropEm = () => {
 
 // progression
 const speedUp = () => {
-  score += 1;
-  if (score % 400 === 0) {
-    speed -= 5;
+  if (playing) {
+    score += 1;
+    if (score % 400 === 0) {
+      speed -= 5;
+    };
+    if (rate % 400 === 0) {
+      rate -= 1;
+    };
   };
-  if (rate % 800 === 0) {
-    rate -= 1;
-  }
   currentScore.innerText = `SCORE: ${Math.floor(score)}`;
 };
-
 const movingParts = () => {
   moveBlobby();
   generateBlocks();
