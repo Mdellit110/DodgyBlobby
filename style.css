@@ -1,4 +1,7 @@
 /* background stuff */
+html {
+  overflow: hidden;
+}
 body {
   background-image: url('ESCAPEbackground.jpg');/* got image from https://steamcommunity.com/sharedfiles/filedetails/?id=844946240 */
   text-align: center;

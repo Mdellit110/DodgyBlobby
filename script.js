@@ -24,11 +24,15 @@ let rate = 11;// sets rate of generateBlocks
 const movePlayer = (ev) => { // initiates movements left/right
   if (ev.keyCode === 39) { //rightArrow
     right = true;
+    left = false
     playing = true;
     player.classList.add('goRight')
+    player.classList.remove('goLeft')
   } else if (ev.keyCode === 37) { //leftArrow
     left = true;
+    right = false;
     playing = true;
+    player.classList.remove('goRight')
     player.classList.add('goLeft')
   };
 };
@@ -75,7 +79,7 @@ const moveBlobby = () => {
     move -= 1;
   } else if (right){
     if (move >= 98) { //if player hits right wall moves him to left wall
-    move = -2;
+    move = 2;
     }
     move += 1;
   };
@@ -148,6 +152,8 @@ const startGame = () => { //when you hit start button on main page
 };
 const youLose = () => { // brings up try again when you get hit
   playing = false;
+  left = false;
+  right = false;
   tryAgain.style.display = 'block';
   yesButton.style.display = 'block';
   noButton.style.display = 'block';
