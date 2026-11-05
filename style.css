@@ -264,6 +264,51 @@ button.card.selected {
   border-radius: 50% 50% 5px 5px;
 }
 
+/* pickups */
+.block.coin {
+  background: radial-gradient(circle at 35% 35%, #fff2a8, #f2c230 45%, #b8860b);
+  border-radius: 50%;
+  box-shadow: 0 0 14px 2px #ffd23f;
+  z-index: 0;
+}
+.block.bubble {
+  background: radial-gradient(circle at 35% 35%, #ffffffcc, #7fd3ff66 60%);
+  border: 2px solid #bfe9ff;
+  border-radius: 50%;
+  box-shadow: 0 0 16px 2px #7fd3ff;
+  z-index: 0;
+}
+.block.bomb {
+  background: radial-gradient(circle at 35% 35%, #666, #111 60%);
+  border: 2px solid #ff5a3c;
+  border-radius: 50%;
+  box-shadow: 0 0 16px 2px #ff5a3c;
+  z-index: 0;
+}
+/* ring around BLOBBY while a shield is up */
+.player.shielded::after {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  border: 2px solid #bfe9ff;
+  border-radius: 50%;
+  box-shadow: 0 0 14px #7fd3ff, inset 0 0 14px #7fd3ff;
+}
+/* white flash when a bomb goes off */
+body.boom::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  pointer-events: none;
+  animation: boom .35s forwards;
+}
+@keyframes boom {
+  to {
+    opacity: 0;
+  }
+}
+
 /* animations */
 @keyframes blink {
   50% {

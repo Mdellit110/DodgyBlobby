@@ -17,6 +17,8 @@ let gameTime; // id of the current animation frame
 let lastTime = null; // timestamp of the last frame
 let runTime = 0; // seconds played this run
 let spawnTimer = 0; // seconds until the next rock
+let pickupTimer = 0; // seconds until the next pickup
+let runCoins = 0; // coins picked up this run
 let invulnerable = 0; // seconds of blinking after a hit
 let move = 50; //initial player location when blobby appears
 let playing = false;
@@ -55,7 +57,14 @@ const ROCK_TYPES = {
   splitter: { w: 0.03, h: 0.07, fall: 0.9, from: 4 }, // breaks into 2 shards
   drifter: { w: 0.02, h: 0.06, fall: 0.9, from: 5, drift: 0.2 }, // slides sideways
   shard: { w: 0.014, h: 0.04, fall: 1 }, // splitter pieces, never spawned directly
+  // pickups: touching them helps instead of hurts. size is a share of the shorter screen side
+  coin: { size: 0.05, fall: 0.5, kind: 'pickup' },
+  bubble: { size: 0.065, fall: 0.45, kind: 'pickup' }, // +1 shield
+  bomb: { size: 0.065, fall: 0.45, kind: 'pickup' }, // clears the screen of rocks
 };
+const PICKUP_EVERY = 1.5; // seconds between pickups
+const MAGNET_RANGE = 0.3; // screen widths
+const MAX_SHIELD = 3;
 const SPLIT_AT = 0.4; // splitters break this far down the screen
 const SHARD_SPREAD = 0.25; // how fast shards fly apart, in screen widths per second
 
@@ -78,6 +87,8 @@ const newStats = () => ({
   shield: 0, // hits blocked before losing a life
   hitboxScale: 0.7, // share of the sprite that counts as a hit
   scoreMult: 1,
+  coinMult: 1,
+  magnet: false, // pulls coins toward BLOBBY
   fallMult: 1, // rock speed multiplier from upgrades
   spawnMult: 1, // rock spawn rate multiplier from upgrades
 });
@@ -93,6 +104,8 @@ const UPGRADES = [
   { id: 'squish', name: 'Squish', desc: 'Smaller hitbox', apply: (s) => { s.hitboxScale *= 0.85; }, ok: (s) => s.hitboxScale > 0.45 },
   { id: 'slowmo', name: 'Slow-mo', desc: 'Rocks fall 15% slower', apply: (s) => { s.fallMult *= 0.85; } },
   { id: 'glass', name: 'Glass Cannon', desc: '-1 life, x2 score', curse: true, apply: (s) => { s.lives -= 1; s.scoreMult *= 2; }, ok: (s) => s.lives > 1 },
+  { id: 'magnet', name: 'Coin Magnet', desc: 'Pulls coins toward you', once: true, apply: (s) => { s.magnet = true; } },
+  { id: 'rush', name: 'Rush', desc: 'Rocks 20% faster, x1.5 coins', curse: true, apply: (s) => { s.fallMult *= 1.2; s.coinMult *= 1.5; } },
   { id: 'crowd', name: 'Crowded', desc: '25% more rocks, x1.5 score', curse: true, apply: (s) => { s.spawnMult *= 1.25; s.scoreMult *= 1.5; } },
 ];
 
@@ -155,8 +168,8 @@ const makeRock = (type, x, y) => {
   const W = window.innerWidth;
   const H = window.innerHeight;
   const t = ROCK_TYPES[type];
-  const w = t.w * W;
-  const h = t.h * H;
+  const w = t.size ? t.size * Math.min(W, H) : t.w * W;
+  const h = t.size ? w : t.h * H;
   const el = document.createElement('div');
   el.className = `block ${type}`;
   el.style.width = `${w}px`;
@@ -188,6 +201,28 @@ const generateBlocks = (dt) => {
   if (spawnTimer <= 0) {
     spawnTimer += SPAWN_EVERY / (difficulty() * stats.spawnMult);
     makeRock(pickRockType());
+  };
+  pickupTimer -= dt;
+  if (pickupTimer <= 0) {
+    pickupTimer += PICKUP_EVERY;
+    const roll = Math.random();
+    makeRock(roll < 0.04 ? 'bomb' : roll < 0.1 ? 'bubble' : 'coin');
+  };
+};
+
+// BLOBBY touched pickup i
+const collect = (i) => {
+  const type = rocks[i].type;
+  removeRock(i);
+  if (type === 'coin') runCoins += stats.coinMult;
+  if (type === 'bubble') stats.shield = Math.min(stats.shield + 1, MAX_SHIELD);
+  if (type === 'bomb') {
+    for (let j = rocks.length - 1; j >= 0; j--) {
+      if (rocks[j].kind === 'rock') removeRock(j);
+    };
+    body.classList.remove('boom');
+    void body.offsetWidth; // restart the flash animation
+    body.classList.add('boom');
   };
 };
 
@@ -248,12 +283,19 @@ const dropEm = (dt) => {
   const H = window.innerHeight;
   const fall = difficulty() * stats.fallMult;
   const hitBox = playerBox(stats.hitboxScale);
+  const grabBox = playerBox(1); // pickups are easier to grab
+  const playerMiddle = grabBox.x + grabBox.w / 2;
   // loop backwards so removing a rock doesn't skip the next one
   for (let i = rocks.length - 1; i >= 0; i--) {
     const rock = rocks[i];
     if (!rock) continue; // rocks can be cleared mid-loop
+    if (rock.type === 'coin' && stats.magnet) {
+      const gap = playerMiddle - (rock.x + rock.w / 2);
+      rock.vx = Math.abs(gap) < MAGNET_RANGE * W ? Math.sign(gap) * Math.min(Math.abs(gap) * 4, 0.6 * W) : 0;
+    };
     rock.x += rock.vx * dt;
-    rock.y += rock.vy * fall * dt;
+    // pickups don't speed up with difficulty
+    rock.y += rock.vy * (rock.kind === 'pickup' ? 1 : fall) * dt;
     if (rock.type === 'drifter') { // bounce off the walls
       if (rock.x < 0) rock.vx = Math.abs(rock.vx);
       if (rock.x + rock.w > W) rock.vx = -Math.abs(rock.vx);
@@ -271,6 +313,10 @@ const dropEm = (dt) => {
       continue;
     };
     drawRock(rock);
+    if (rock.kind === 'pickup') {
+      if (overlaps(grabBox, rock)) collect(i);
+      continue;
+    };
     if (overlaps(hitBox, rock)) hitRock(i);
     if (!playing) return; // that hit ended the run
   };
@@ -294,7 +340,9 @@ const endWave = () => {
   offered = shuffle(choices).slice(0, 3);
   cardIndex = 0;
   cardsReadyAt = performance.now() + 500;
-  waveTitle.innerText = `WAVE ${wave} CLEARED`;
+  const bonus = wave * 2;
+  runCoins += bonus;
+  waveTitle.innerHTML = `WAVE ${wave} CLEARED<div class="runStats">+${bonus} COINS</div>`;
   cardList.innerHTML = '';
   offered.forEach((u, i) => {
     const card = document.createElement('button');
@@ -346,7 +394,8 @@ const speedUp = (dt) => {
 };
 const updateHud = () => {
   const shield = stats.shield > 0 ? ` · SHIELD ${stats.shield}` : '';
-  currentScore.innerText = `SCORE: ${Math.floor(score)} · WAVE ${wave} · LIVES ${stats.lives}${shield}`;
+  currentScore.innerText = `SCORE: ${Math.floor(score)} · WAVE ${wave} · LIVES ${stats.lives}${shield} · COINS ${Math.floor(runCoins)}`;
+  player.classList.toggle('shielded', stats.shield > 0);
 };
 const movingParts = (time) => {
   // seconds since the last frame, capped so a hidden tab doesn't jump ahead
@@ -373,6 +422,8 @@ const resetRun = () => {
   score = 0;
   runTime = 0;
   spawnTimer = 0;
+  pickupTimer = PICKUP_EVERY;
+  runCoins = 0;
   invulnerable = 0;
   stats = newStats();
   wave = START_WAVE;
@@ -408,7 +459,7 @@ const youLose = () => { // brings up try again when you get hit
   finalScore.style.display = 'block';
   player.classList.remove('goLeft', 'goRight', 'hurt');
   player.classList.add('dead')
-  finalScore.innerHTML = `SCORE: ${Math.floor(score)}<div class="runStats">REACHED WAVE ${wave}</div>`;
+  finalScore.innerHTML = `SCORE: ${Math.floor(score)}<div class="runStats">REACHED WAVE ${wave} · ${Math.floor(runCoins)} COINS</div>`;
   currentScore.style.display = 'none';
   body.removeEventListener('keydown', movePlayer, true);
   removeTouch();
