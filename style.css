@@ -314,9 +314,10 @@ button.card.selected {
   display: block;
 }
 
-/* blinks after a hit while BLOBBY can't be hurt */
+/* blinks after a hit while BLOBBY can't be hurt. enterLeft stays in the
+   list so removing this class doesn't replay the entry slide */
 .player.hurt {
-  animation: blink .2s infinite;
+  animation: enterLeft .5s, blink .2s infinite;
 }
 
 /* rocks */

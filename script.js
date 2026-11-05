@@ -25,6 +25,9 @@ let runTime = 0; // seconds played this run
 let spawnTimer = 0; // seconds until the next rock
 let pickupTimer = 0; // seconds until the next pickup
 let runCoins = 0; // coins picked up this run
+let banked = 0; // coins from this run already added to the save
+let bombed = false; // a bomb was caught this frame
+let hudText = ''; // last HUD text, so it's only rewritten when it changes
 let invulnerable = 0; // seconds of blinking after a hit
 let move = 50; //initial player location when blobby appears
 let playing = false;
@@ -43,6 +46,7 @@ let taken = []; // ids of one-time upgrades already picked this run
 const params = new URLSearchParams(window.location.search);
 const WAVE_LENGTH = Number(params.get('wavelen')) || 30; // seconds
 const START_WAVE = Number(params.get('startwave')) || 1;
+const TESTING = params.has('wavelen') || params.has('startwave'); // test runs aren't saved
 
 // tuning: everything is per second and scaled to the screen, so the game
 // plays the same on any screen size and refresh rate
@@ -99,21 +103,35 @@ const defaultSave = () => ({
 });
 const loadSave = () => {
   try {
-    const saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || {};
-    const fresh = defaultSave();
-    return { ...fresh, ...saved, perks: { ...fresh.perks, ...saved.perks } };
+    return cleanSave(JSON.parse(localStorage.getItem(SAVE_KEY)));
   } catch (e) { // private browsing or a broken save
     return defaultSave();
   };
 };
+// fixes missing or wrong-type fields so an old or edited save can't break the game
+const count = (n, max = Infinity) => Math.min(Math.max(Math.floor(Number(n)) || 0, 0), max);
+const cleanSave = (saved) => {
+  const s = saved && typeof saved === 'object' ? saved : {};
+  const perks = s.perks && typeof s.perks === 'object' ? s.perks : {};
+  const owned = Array.isArray(s.owned) ? s.owned.filter((id) => BLOBBIES[id]) : [];
+  if (!owned.includes('classic')) owned.unshift('classic');
+  return {
+    coins: count(s.coins),
+    best: count(s.best),
+    bestWave: count(s.bestWave),
+    perks: Object.fromEntries(PERKS.map((p) => [p.id, count(perks[p.id], p.max)])),
+    owned,
+    blobby: owned.includes(s.blobby) ? s.blobby : 'classic',
+  };
+};
 const writeSave = () => {
+  if (TESTING) return;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   } catch (e) {
     // can't save on this device, progress lasts until the page closes
   };
 };
-const save = loadSave();
 
 // permanent upgrades bought with coins
 const PERKS = [
@@ -129,6 +147,7 @@ const BLOBBIES = {
   lucky: { name: 'Lucky', desc: 'x1.5 coins', hue: 290, price: 150, apply: (s) => { s.coinMult *= 1.5; } },
 };
 const currentBlobby = () => BLOBBIES[save.blobby] || BLOBBIES.classic;
+const save = loadSave();
 
 const newStats = () => {
   const s = baseStats();
@@ -154,14 +173,14 @@ const difficulty = () => 1 + (wave - 1) * 0.15 + (waveTime / WAVE_LENGTH) * 0.1;
 
 // upgrade cards offered between waves. curses help and hurt at the same time
 const UPGRADES = [
-  { id: 'speed', name: 'Zoomies', desc: 'Move 20% faster', apply: (s) => { s.speed *= 1.2; } },
+  { id: 'speed', name: 'Zoomies', desc: 'Move 20% faster', apply: (s) => { s.speed *= 1.2; }, ok: (s) => s.speed < 1.8 },
   { id: 'life', name: 'Extra Life', desc: '+1 life', apply: (s) => { s.lives += 1; } },
-  { id: 'shield', name: 'Shield', desc: 'Blocks the next hit', apply: (s) => { s.shield += 1; } },
+  { id: 'shield', name: 'Shield', desc: 'Blocks the next hit', apply: (s) => { s.shield += 1; }, ok: (s) => s.shield < MAX_SHIELD },
   { id: 'squish', name: 'Squish', desc: 'Smaller hitbox', apply: (s) => { s.hitboxScale *= 0.85; }, ok: (s) => s.hitboxScale > 0.45 },
-  { id: 'slowmo', name: 'Slow-mo', desc: 'Rocks fall 15% slower', apply: (s) => { s.fallMult *= 0.85; } },
+  { id: 'slowmo', name: 'Slow-mo', desc: 'Rocks fall 15% slower', apply: (s) => { s.fallMult *= 0.85; }, ok: (s) => s.fallMult > 0.65 },
   { id: 'glass', name: 'Glass Cannon', desc: '-1 life, x2 score', curse: true, apply: (s) => { s.lives -= 1; s.scoreMult *= 2; }, ok: (s) => s.lives > 1 },
   { id: 'magnet', name: 'Coin Magnet', desc: 'Pulls coins toward you', once: true, apply: (s) => { s.magnet = true; } },
-  { id: 'rush', name: 'Rush', desc: 'Rocks 20% faster, x1.5 coins', curse: true, apply: (s) => { s.fallMult *= 1.2; s.coinMult *= 1.5; } },
+  { id: 'rush', name: 'Rush', desc: 'Rocks 20% faster, x1.5 coins', curse: true, apply: (s) => { s.fallMult *= 1.2; s.coinMult *= 1.5; }, ok: (s) => s.coinMult < 3 },
   { id: 'crowd', name: 'Crowded', desc: '25% more rocks, x1.5 score', curse: true, apply: (s) => { s.spawnMult *= 1.25; s.scoreMult *= 1.5; } },
 ];
 
@@ -271,11 +290,9 @@ const collect = (i) => {
   const type = rocks[i].type;
   removeRock(i);
   if (type === 'coin') runCoins += stats.coinMult;
-  if (type === 'bubble') stats.shield = Math.min(stats.shield + 1, MAX_SHIELD);
+  if (type === 'bubble' && stats.shield < MAX_SHIELD) stats.shield += 1;
   if (type === 'bomb') {
-    for (let j = rocks.length - 1; j >= 0; j--) {
-      if (rocks[j].kind === 'rock') removeRock(j);
-    };
+    bombed = true; // rocks are cleared after the drop loop
     body.classList.remove('boom');
     void body.offsetWidth; // restart the flash animation
     body.classList.add('boom');
@@ -344,7 +361,6 @@ const dropEm = (dt) => {
   // loop backwards so removing a rock doesn't skip the next one
   for (let i = rocks.length - 1; i >= 0; i--) {
     const rock = rocks[i];
-    if (!rock) continue; // rocks can be cleared mid-loop
     if (rock.type === 'coin' && stats.magnet) {
       const gap = playerMiddle - (rock.x + rock.w / 2);
       rock.vx = Math.abs(gap) < MAGNET_RANGE * W ? Math.sign(gap) * Math.min(Math.abs(gap) * 4, 0.6 * W) : 0;
@@ -360,7 +376,7 @@ const dropEm = (dt) => {
       const middle = rock.x + rock.w / 2;
       removeRock(i);
       [-1, 1].forEach((side) => {
-        makeRock('shard', middle, rock.y).vx = side * SHARD_SPREAD * W;
+        makeRock('shard', middle - (ROCK_TYPES.shard.w * W) / 2, rock.y).vx = side * SHARD_SPREAD * W;
       });
       continue;
     };
@@ -375,6 +391,12 @@ const dropEm = (dt) => {
     };
     if (overlaps(hitBox, rock)) hitRock(i);
     if (!playing) return; // that hit ended the run
+  };
+  if (bombed) {
+    bombed = false;
+    for (let i = rocks.length - 1; i >= 0; i--) {
+      if (rocks[i].kind === 'rock') removeRock(i);
+    };
   };
 };
 
@@ -450,7 +472,11 @@ const speedUp = (dt) => {
 };
 const updateHud = () => {
   const shield = stats.shield > 0 ? ` · SHIELD ${stats.shield}` : '';
-  currentScore.innerText = `SCORE: ${Math.floor(score)} · WAVE ${wave} · LIVES ${stats.lives}${shield} · COINS ${Math.floor(runCoins)}`;
+  const text = `SCORE: ${Math.floor(score)} · WAVE ${wave} · LIVES ${stats.lives}${shield} · COINS ${Math.floor(runCoins)}`;
+  if (text !== hudText) {
+    hudText = text;
+    currentScore.innerText = text;
+  };
   player.classList.toggle('shielded', stats.shield > 0);
 };
 const movingParts = (time) => {
@@ -463,7 +489,7 @@ const movingParts = (time) => {
     dropEm(dt);
   };
   if (playing && !choosing) speedUp(dt);
-  updateHud();
+  if (playing) updateHud();
   gameTime = window.requestAnimationFrame(movingParts);
 };
 
@@ -480,6 +506,7 @@ const resetRun = () => {
   spawnTimer = 0;
   pickupTimer = PICKUP_EVERY;
   runCoins = 0;
+  banked = 0;
   invulnerable = 0;
   stats = newStats();
   player.style.filter = `hue-rotate(${currentBlobby().hue}deg)`;
@@ -520,7 +547,7 @@ const youLose = () => { // brings up try again when you get hit
   player.classList.add('dead')
   const earned = Math.floor(runCoins);
   const newBest = Math.floor(score) > save.best;
-  save.coins += earned;
+  bankCoins();
   save.best = Math.max(save.best, Math.floor(score));
   save.bestWave = Math.max(save.bestWave, wave);
   writeSave();
@@ -547,6 +574,18 @@ const backToMain = () => { //when you hit no button on lose state
   player.style.display = 'none';
 }
 
+
+// adds this run's new coins to the save, so closing the app mid-run keeps them
+const bankCoins = () => {
+  const earned = Math.floor(runCoins) - banked;
+  save.coins += earned;
+  banked += earned;
+  writeSave();
+};
+window.addEventListener('pagehide', () => { if (playing) bankCoins(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && playing) bankCoins();
+});
 
 // main menu and shop
 const showMainMenu = () => {
