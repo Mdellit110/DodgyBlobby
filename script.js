@@ -8,6 +8,9 @@ const yesButton = document.querySelector('#yes');
 const noButton = document.querySelector('#no');
 const finalScore = document.querySelector('.finalScore');
 const currentScore = document.querySelector('.currentScore');
+const upgradeMenu = document.querySelector('#upgradeMenu');
+const waveTitle = document.querySelector('.waveTitle');
+const cardList = document.querySelector('.cards');
 let rocks = []; // everything falling: {el, x, y, w, h, vx, vy, type, kind}
 let score = 0;
 let gameTime; // id of the current animation frame
@@ -20,6 +23,18 @@ let playing = false;
 let left = false; // player moves left when true
 let right = false; // player moves right when true
 let stats; // this run's player stats, see newStats()
+let wave = 1;
+let waveTime = 0; // seconds into the current wave
+let choosing = false; // true while the upgrade cards are showing
+let offered = []; // upgrades on the cards right now
+let cardIndex = 0; // card picked with the keyboard
+let cardsReadyAt = 0; // ignore picks until then so a stray tap doesn't choose
+let taken = []; // ids of one-time upgrades already picked this run
+
+// test hooks: ?wavelen=2 makes waves 2 seconds, ?startwave=5 starts on wave 5
+const params = new URLSearchParams(window.location.search);
+const WAVE_LENGTH = Number(params.get('wavelen')) || 30; // seconds
+const START_WAVE = Number(params.get('startwave')) || 1;
 
 // tuning: everything is per second and scaled to the screen, so the game
 // plays the same on any screen size and refresh rate
@@ -46,13 +61,28 @@ const newStats = () => ({
   spawnMult: 1, // rock spawn rate multiplier from upgrades
 });
 
-// gets harder the longer you last
-const difficulty = () => 1 + runTime / 75;
+// gets harder each wave, and a little during each wave
+const difficulty = () => 1 + (wave - 1) * 0.15 + (waveTime / WAVE_LENGTH) * 0.1;
+
+// upgrade cards offered between waves. curses help and hurt at the same time
+const UPGRADES = [
+  { id: 'speed', name: 'Zoomies', desc: 'Move 20% faster', apply: (s) => { s.speed *= 1.2; } },
+  { id: 'life', name: 'Extra Life', desc: '+1 life', apply: (s) => { s.lives += 1; } },
+  { id: 'shield', name: 'Shield', desc: 'Blocks the next hit', apply: (s) => { s.shield += 1; } },
+  { id: 'squish', name: 'Squish', desc: 'Smaller hitbox', apply: (s) => { s.hitboxScale *= 0.85; }, ok: (s) => s.hitboxScale > 0.45 },
+  { id: 'slowmo', name: 'Slow-mo', desc: 'Rocks fall 15% slower', apply: (s) => { s.fallMult *= 0.85; } },
+  { id: 'glass', name: 'Glass Cannon', desc: '-1 life, x2 score', curse: true, apply: (s) => { s.lives -= 1; s.scoreMult *= 2; }, ok: (s) => s.lives > 1 },
+  { id: 'crowd', name: 'Crowded', desc: '25% more rocks, x1.5 score', curse: true, apply: (s) => { s.spawnMult *= 1.25; s.scoreMult *= 1.5; } },
+];
 
 
 //keybindings
   //player movement
 const movePlayer = (ev) => { // initiates movements left/right
+  if (choosing) {
+    pickWithKeys(ev);
+    return;
+  };
   if (ev.keyCode === 39) { //rightArrow
     right = true;
     left = false
@@ -213,27 +243,88 @@ const dropEm = (dt) => {
   };
 };
 
+// upgrade waves
+const shuffle = (list) => list
+  .map((item) => [Math.random(), item])
+  .sort((a, b) => a[0] - b[0])
+  .map((pair) => pair[1]);
+const endWave = () => {
+  choosing = true;
+  left = false;
+  right = false;
+  player.classList.remove('goLeft', 'goRight');
+  removeTouch(); // so taps reach the cards
+  for (let i = rocks.length - 1; i >= 0; i--) {
+    if (rocks[i].kind === 'rock') removeRock(i);
+  };
+  const choices = UPGRADES.filter((u) => !taken.includes(u.id) && (!u.ok || u.ok(stats)));
+  offered = shuffle(choices).slice(0, 3);
+  cardIndex = 0;
+  cardsReadyAt = performance.now() + 500;
+  waveTitle.innerText = `WAVE ${wave} CLEARED`;
+  cardList.innerHTML = '';
+  offered.forEach((u, i) => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = u.curse ? 'card curse' : 'card';
+    card.innerHTML = `<span class="cardName"></span><span class="cardDesc"></span>`;
+    card.querySelector('.cardName').innerText = u.name;
+    card.querySelector('.cardDesc').innerText = u.desc;
+    card.addEventListener('click', () => pickCard(i));
+    cardList.appendChild(card);
+  });
+  highlightCard();
+  upgradeMenu.style.display = 'flex';
+};
+const highlightCard = () => {
+  [...cardList.children].forEach((card, i) => card.classList.toggle('selected', i === cardIndex));
+};
+const pickWithKeys = (ev) => {
+  if (ev.repeat) return; // holding an arrow from the last wave shouldn't race across
+  if (ev.keyCode === 37) cardIndex = (cardIndex + offered.length - 1) % offered.length;
+  if (ev.keyCode === 39) cardIndex = (cardIndex + 1) % offered.length;
+  highlightCard();
+  if (ev.keyCode === 13 || ev.keyCode === 32) { //enter or space
+    ev.preventDefault();
+    pickCard(cardIndex);
+  };
+};
+const pickCard = (i) => {
+  if (!choosing || performance.now() < cardsReadyAt) return;
+  const u = offered[i];
+  u.apply(stats);
+  if (u.once) taken.push(u.id);
+  choosing = false;
+  upgradeMenu.style.display = 'none';
+  wave += 1;
+  waveTime = 0;
+  spawnTimer = 0.5; // a short breather before rocks start again
+  addTouch();
+};
+
 // progression
 const speedUp = (dt) => {
   runTime += dt;
+  waveTime += dt;
+  if (waveTime >= WAVE_LENGTH) endWave();
   score += SCORE_RATE * stats.scoreMult * dt;
   invulnerable = Math.max(0, invulnerable - dt);
   if (invulnerable === 0) player.classList.remove('hurt');
 };
 const updateHud = () => {
-  const shield = stats.shield > 0 ? `  SHIELD ${stats.shield}` : '';
-  currentScore.innerText = `SCORE: ${Math.floor(score)}  LIVES ${stats.lives}${shield}`;
+  const shield = stats.shield > 0 ? ` · SHIELD ${stats.shield}` : '';
+  currentScore.innerText = `SCORE: ${Math.floor(score)} · WAVE ${wave} · LIVES ${stats.lives}${shield}`;
 };
 const movingParts = (time) => {
   // seconds since the last frame, capped so a hidden tab doesn't jump ahead
   const dt = lastTime === null ? 0 : Math.min((time - lastTime) / 1000, 0.05);
   lastTime = time;
-  if (playing) {
+  if (playing && !choosing) {
     moveBlobby(dt);
     generateBlocks(dt);
     dropEm(dt);
   };
-  if (playing) speedUp(dt);
+  if (playing && !choosing) speedUp(dt);
   updateHud();
   gameTime = window.requestAnimationFrame(movingParts);
 };
@@ -251,6 +342,11 @@ const resetRun = () => {
   spawnTimer = 0;
   invulnerable = 0;
   stats = newStats();
+  wave = START_WAVE;
+  waveTime = 0;
+  choosing = false;
+  taken = [];
+  upgradeMenu.style.display = 'none';
   player.classList.remove('dead', 'hurt');
 };
 
@@ -279,7 +375,7 @@ const youLose = () => { // brings up try again when you get hit
   finalScore.style.display = 'block';
   player.classList.remove('goLeft', 'goRight', 'hurt');
   player.classList.add('dead')
-  finalScore.innerText = `SCORE: ${Math.floor(score)}`;
+  finalScore.innerHTML = `SCORE: ${Math.floor(score)}<div class="runStats">REACHED WAVE ${wave}</div>`;
   currentScore.style.display = 'none';
   body.removeEventListener('keydown', movePlayer, true);
   removeTouch();

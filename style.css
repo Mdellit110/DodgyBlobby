@@ -107,6 +107,64 @@ display: none;
 animation: enterBottom 1s;
 }
 
+/* upgrade cards between waves */
+#upgradeMenu {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4vmin;
+  padding: 0 16px;
+  background: rgba(31, 25, 21, .6);
+}
+.waveTitle {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 9vmin;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+  animation: dropDown .5s;
+}
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3vmin;
+  animation: enterBottom .5s;
+}
+button.card {
+  position: static;
+  width: clamp(120px, 22vw, 240px);
+  height: auto;
+  min-height: 30vmin;
+  padding: 2vmin;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vmin;
+  font-size: 4.5vmin;
+  line-height: 1.1;
+}
+button.card .cardDesc {
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 3.5vmin;
+}
+button.card.curse {
+  background: #c9583a;
+}
+button.card.selected {
+  box-shadow: 0px 0px 50px 10px #efb03b;
+  outline: 3px solid #fff3d6;
+}
+.runStats {
+  font-size: 3.5vmin;
+  margin-top: 1vmin;
+}
+
 /* BLOBBY the rock dodging blob */
 /* player states */
 .player {
