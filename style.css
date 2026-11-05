@@ -72,6 +72,12 @@ button:active {
   animation-name: enterRight;
   animation-duration: 2s;
 }
+#shop {
+  top: 65%;
+  left: 37%;
+  animation-name: enterLeft;
+  animation-duration: 2s;
+}
 #no {
   display: none;
   top: 50%;
@@ -92,19 +98,156 @@ font-size: 7vmin;
 text-shadow: -5px 5px 50px #efb03b;
 color: #ed9711;
 width: 100%;
-top: 36%;
+top: 27%;
 position: absolute;
 display: none;
+pointer-events: none; /* never block the YES/NO buttons */
 animation: enterBottom 1s;
 }
 .currentScore {
 font-family: 'Bungee Shade', cursive;
-font-size: 3vmin;
+font-size: 4vmin;
 text-shadow: -5px 5px 50px #efb03b;
 color: #ed9711;
 position: absolute;
 display: none;
 animation: enterBottom 1s;
+}
+
+/* coins and best score on the main menu */
+.bank {
+  font-family: 'Bungee', cursive;
+  font-size: 4vmin;
+  color: #ed9711;
+  text-shadow: -2px 2px 20px #efb03b;
+  position: absolute;
+  bottom: 6%;
+  width: 100%;
+  animation: enterBottom 2s;
+}
+
+/* shop */
+#shopMenu {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow-y: auto;
+  touch-action: pan-y; /* lets the list scroll on phones */
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left));
+  background: rgba(31, 25, 21, .8);
+}
+.shopHeader {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 10vmin;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+}
+.shopCoins {
+  font-family: 'Bungee', cursive;
+  font-size: 5vmin;
+  color: #ffd23f;
+  margin-bottom: 3vmin;
+}
+.shopList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  max-width: 1000px;
+  margin: 0 auto 16px;
+}
+button.shopItem,
+button#shopBack {
+  position: static;
+  width: auto;
+  height: auto;
+  font-size: 16px;
+}
+button.shopItem {
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+button.shopItem:disabled {
+  opacity: .55;
+}
+.shopItem .itemDesc {
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+}
+.shopItem .itemTag {
+  font-size: 13px;
+}
+.shopItem .preview {
+  width: 44px;
+  height: 44px;
+  background: url('blobStates/bloby2.png') center / contain no-repeat;
+}
+button#shopBack {
+  padding: 10px 32px;
+}
+
+/* upgrade cards between waves */
+#upgradeMenu {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4vmin;
+  padding: 0 16px;
+  background: rgba(31, 25, 21, .6);
+}
+.waveTitle {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 9vmin;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+  animation: dropDown .5s;
+}
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3vmin;
+  animation: enterBottom .5s;
+}
+button.card {
+  position: static;
+  width: clamp(120px, 22vw, 240px);
+  height: auto;
+  min-height: 30vmin;
+  padding: 2vmin;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vmin;
+  font-size: 4.5vmin;
+  line-height: 1.1;
+}
+button.card .cardDesc {
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 3.5vmin;
+}
+button.card.curse {
+  background: #c9583a;
+}
+button.card.selected {
+  box-shadow: 0px 0px 50px 10px #efb03b;
+  outline: 3px solid #fff3d6;
+}
+.runStats {
+  font-size: 3.5vmin;
+  margin-top: 1vmin;
 }
 
 /* BLOBBY the rock dodging blob */
@@ -171,19 +314,93 @@ animation: enterBottom 1s;
   display: block;
 }
 
+/* blinks after a hit while BLOBBY can't be hurt. enterLeft stays in the
+   list so removing this class doesn't replay the entry slide */
+.player.hurt {
+  animation: enterLeft .5s, blink .2s infinite;
+}
+
 /* rocks */
 .block {
   background: #0b9861;
   border-radius: 5px;
   box-shadow: 0px 0px 100px 2px #efb03b;
-  height: 6%;
-  width: 2%;
-  position: absolute;
-  top: 0%;
+  position: absolute; /* size and position are set from script.js */
+  top: 0;
+  left: 0;
   z-index: -1;
+  will-change: transform;
+}
+
+/* rock types */
+.block.boulder {
+  background: #7a6a55;
+  border-radius: 40%;
+}
+.block.needle {
+  background: #d8eef5;
+  border-radius: 3px;
+}
+.block.splitter,
+.block.shard {
+  background: #b04fd1;
+}
+.block.drifter {
+  background: #2f8fd8;
+  border-radius: 50% 50% 5px 5px;
+}
+
+/* pickups */
+.block.coin {
+  background: radial-gradient(circle at 35% 35%, #fff2a8, #f2c230 45%, #b8860b);
+  border-radius: 50%;
+  box-shadow: 0 0 14px 2px #ffd23f;
+  z-index: 0;
+}
+.block.bubble {
+  background: radial-gradient(circle at 35% 35%, #ffffffcc, #7fd3ff66 60%);
+  border: 2px solid #bfe9ff;
+  border-radius: 50%;
+  box-shadow: 0 0 16px 2px #7fd3ff;
+  z-index: 0;
+}
+.block.bomb {
+  background: radial-gradient(circle at 35% 35%, #666, #111 60%);
+  border: 2px solid #ff5a3c;
+  border-radius: 50%;
+  box-shadow: 0 0 16px 2px #ff5a3c;
+  z-index: 0;
+}
+/* ring around BLOBBY while a shield is up */
+.player.shielded::after {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  border: 2px solid #bfe9ff;
+  border-radius: 50%;
+  box-shadow: 0 0 14px #7fd3ff, inset 0 0 14px #7fd3ff;
+}
+/* white flash when a bomb goes off */
+body.boom::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  pointer-events: none;
+  animation: boom .35s forwards;
+}
+@keyframes boom {
+  to {
+    opacity: 0;
+  }
 }
 
 /* animations */
+@keyframes blink {
+  50% {
+    opacity: .25;
+  }
+}
 @keyframes dropDown {
   0% {
     transform: translateY(-200%);

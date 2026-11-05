@@ -1,6 +1,6 @@
 // Caches the game files so it works offline after the first visit.
 // Bump the version when files change so players get the update.
-const CACHE = 'dodgyblobby-v1';
+const CACHE = 'dodgyblobby-v2';
 const FILES = [
   './', 'index.html', 'script.js', 'style.css', 'manifest.json', 'ESCAPEbackground.jpg',
   'blobStates/bloby0.png', 'blobStates/bloby1.png', 'blobStates/bloby2.png', 'blobStates/bloby3.png',
@@ -8,7 +8,8 @@ const FILES = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));
+  // 'reload' skips the browser's HTTP cache so every file is from the same release
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))));
   self.skipWaiting();
 });
 
