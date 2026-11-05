@@ -1,9 +1,10 @@
 // Caches the game files so it works offline after the first visit.
 // Bump the version when files change so players get the update.
-const CACHE = 'dodgyblobby-v2';
+const CACHE = 'dodgyblobby-v3';
 const FILES = [
   './', 'index.html', 'script.js', 'style.css', 'manifest.json', 'ESCAPEbackground.jpg',
   'blobStates/bloby0.png', 'blobStates/bloby1.png', 'blobStates/bloby2.png', 'blobStates/bloby3.png',
+  'rocks/normal.png', 'rocks/boulder.png', 'rocks/needle.png', 'rocks/splitter.png', 'rocks/shard.png', 'rocks/drifter.png',
   'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'
 ];
 

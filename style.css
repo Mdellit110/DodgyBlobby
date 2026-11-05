@@ -349,6 +349,21 @@ button.card.selected {
   background: #2f8fd8;
   border-radius: 50% 50% 5px 5px;
 }
+/* pixel sprites for rocks, drawn at their own shape. hits use the same shape (hitsRock) */
+.block.normal, .block.boulder, .block.needle,
+.block.splitter, .block.shard, .block.drifter {
+  background: center / contain no-repeat;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 0 6px #efb03b);
+  image-rendering: pixelated;
+}
+.block.normal { background-image: url(rocks/normal.png); }
+.block.boulder { background-image: url(rocks/boulder.png); }
+.block.needle { background-image: url(rocks/needle.png); }
+.block.splitter { background-image: url(rocks/splitter.png); }
+.block.shard { background-image: url(rocks/shard.png); }
+.block.drifter { background-image: url(rocks/drifter.png); }
 
 /* pickups */
 .block.coin {

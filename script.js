@@ -315,6 +315,48 @@ const playerBox = (scale) => {
 const overlaps = (a, b) =>
   a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
 
+// rock sprites, and which of their pixels are solid, so hits match the drawn shape
+const SPRITE_ROCKS = ['normal', 'boulder', 'needle', 'splitter', 'shard', 'drifter'];
+const rockMasks = {};
+SPRITE_ROCKS.forEach((type) => {
+  const img = new Image();
+  img.onload = () => {
+    try {
+      const c = document.createElement('canvas');
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, c.width, c.height).data;
+      const solid = new Uint8Array(c.width * c.height);
+      for (let i = 0; i < solid.length; i++) solid[i] = data[i * 4 + 3] > 0 ? 1 : 0;
+      rockMasks[type] = { w: c.width, h: c.height, solid };
+    } catch (e) {} // no mask: that rock falls back to its box
+  };
+  img.src = `rocks/${type}.png`;
+});
+
+// box hit first, then check the sprite's solid pixels under the box
+const hitsRock = (box, rock) => {
+  if (!overlaps(box, rock)) return false;
+  const m = rockMasks[rock.type];
+  if (!m) return true;
+  // the sprite is drawn centered in the rock's box at its own shape (background-size: contain)
+  const s = Math.min(rock.w / m.w, rock.h / m.h);
+  const left = rock.x + (rock.w - m.w * s) / 2;
+  const top = rock.y + (rock.h - m.h * s) / 2;
+  const x0 = Math.max(0, Math.floor((box.x - left) / s));
+  const x1 = Math.min(m.w - 1, Math.ceil((box.x + box.w - left) / s) - 1);
+  const y0 = Math.max(0, Math.floor((box.y - top) / s));
+  const y1 = Math.min(m.h - 1, Math.ceil((box.y + box.h - top) / s) - 1);
+  for (let y = y0; y <= y1; y++) {
+    for (let x = x0; x <= x1; x++) {
+      if (m.solid[y * m.w + x]) return true;
+    };
+  };
+  return false;
+};
+
 // BLOBBY got hit by rock i
 const hitRock = (i) => {
   if (invulnerable > 0) return;
@@ -389,7 +431,7 @@ const dropEm = (dt) => {
       if (overlaps(grabBox, rock)) collect(i);
       continue;
     };
-    if (overlaps(hitBox, rock)) hitRock(i);
+    if (hitsRock(hitBox, rock)) hitRock(i);
     if (!playing) return; // that hit ended the run
   };
   if (bombed) {
