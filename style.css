@@ -216,3 +216,23 @@ animation: enterBottom 1s;
     transform: translateX(0%);
   }
 }
+
+/* phone / home-screen app */
+html, body {
+  margin: 0;
+  height: 100%;
+  touch-action: none;           /* no pinch-zoom or pull-to-refresh */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+body {
+  height: 100dvh;
+  background-color: #1f1915;
+}
+.currentScore {
+  top: env(safe-area-inset-top, 0);
+  left: max(8px, env(safe-area-inset-left, 0));
+}

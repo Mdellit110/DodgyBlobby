@@ -46,6 +46,28 @@ const unMovePlayer = (ev) => { // stops movement left/right
   };
 };
 
+// touch controls: hold the left or right half of the screen to move
+const touchMove = (ev) => {
+  ev.preventDefault(); // stop scrolling and zooming while playing
+  const touch = ev.touches[ev.touches.length - 1];
+  if (!touch) { // no fingers left on the screen
+    left = false;
+    right = false;
+    player.classList.remove('goLeft', 'goRight');
+    return;
+  }
+  const goRight = touch.clientX > window.innerWidth / 2;
+  movePlayer({ keyCode: goRight ? 39 : 37 });
+};
+const addTouch = () => {
+  ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach((t) =>
+    window.addEventListener(t, touchMove, { passive: false }));
+};
+const removeTouch = () => {
+  ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach((t) =>
+    window.removeEventListener(t, touchMove, { passive: false }));
+};
+
 // generates new block at random distance off left wall
 const generateBlocks = () => {
   if (playing && score % rate === 0) {
@@ -88,13 +110,15 @@ const moveBlobby = () => {
 
 // drops the rocks
 const dropEm = () => {
-  if (blocks !== [] && playing) {
-    for (let i=0; i<blocks.length; i++) {
+  if (blocks.length && playing) {
+    // loop backwards so removing a block doesn't skip the next one
+    for (let i = blocks.length - 1; i >= 0; i--) {
       checkCollision(i);
-      if (blocks[i] !== undefined && (blocks[i].offsetTop) < (window.innerHeight - blocks[i].offsetHeight)) {
+      if (blocks[i].offsetTop < (window.innerHeight - blocks[i].offsetHeight)) {
         blocks[i].style.top =`${(blocks[i].offsetTop + (window.innerHeight / speed))}px`; // converts a percentage into pixel form to keep drop rate the same for all screen sizes
       } else {
-        resetBlock();
+        blocks[i].remove();
+        blocks.splice(i, 1);
       };
     };
   };
@@ -105,9 +129,9 @@ const speedUp = () => {
   if (playing) {
     score += 1;
     if (score % 400 === 0) {
-      speed -= 5;
+      speed = Math.max(speed - 5, 20); // floor keeps rocks falling down
     };
-    if (rate % 400 === 0) {
+    if (score % 400 === 0 && rate > 3) {
       rate -= 1;
     };
   };
@@ -132,7 +156,7 @@ const resetBlock = () => {
   firstBlock.parentNode.removeChild(firstBlock);
 };
 const resetBlocks = () => {
-  while (blocks.length > 1){
+  while (blocks.length > 0){
     resetBlock();
   }
 };
@@ -149,6 +173,7 @@ const startGame = () => { //when you hit start button on main page
   currentScore.style.display = 'block';
   body.addEventListener('keydown', movePlayer, true);
   body.addEventListener('keyup', unMovePlayer, true);
+  addTouch();
 };
 const youLose = () => { // brings up try again when you get hit
   playing = false;
@@ -162,6 +187,8 @@ const youLose = () => { // brings up try again when you get hit
   finalScore.innerText = `SCORE: ${Math.floor(score)}`;
   currentScore.style.display = 'none';
   body.removeEventListener('keydown', movePlayer, true);
+  removeTouch();
+  player.classList.remove('goLeft', 'goRight');
   yesButton.addEventListener('click', restartGame);
   noButton.addEventListener('click', backToMain);
 };
@@ -193,3 +220,8 @@ const backToMain = () => { //when you hit no button on lose state
 //on start up run these functions
 startButton.addEventListener('click', startGame);
 window.requestAnimationFrame(movingParts);
+
+// lets the game install to the home screen and work offline
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
