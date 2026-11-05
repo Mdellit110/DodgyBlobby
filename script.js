@@ -11,6 +11,12 @@ const currentScore = document.querySelector('.currentScore');
 const upgradeMenu = document.querySelector('#upgradeMenu');
 const waveTitle = document.querySelector('.waveTitle');
 const cardList = document.querySelector('.cards');
+const shopButton = document.querySelector('#shop');
+const bank = document.querySelector('.bank');
+const shopMenu = document.querySelector('#shopMenu');
+const shopCoins = document.querySelector('.shopCoins');
+const shopList = document.querySelector('.shopList');
+const shopBack = document.querySelector('#shopBack');
 let rocks = []; // everything falling: {el, x, y, w, h, vx, vy, type, kind}
 let score = 0;
 let gameTime; // id of the current animation frame
@@ -81,7 +87,57 @@ const pickRockType = () => {
   return 'normal';
 };
 
-const newStats = () => ({
+// saved progress, kept on this device between runs
+const SAVE_KEY = 'dodgyblobby-save';
+const defaultSave = () => ({
+  coins: 0,
+  best: 0,
+  bestWave: 0,
+  perks: { shield: 0, life: 0, cards: 0 }, // levels bought in the shop
+  owned: ['classic'], // Blobbies bought in the shop
+  blobby: 'classic', // the one being played
+});
+const loadSave = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SAVE_KEY)) || {};
+    const fresh = defaultSave();
+    return { ...fresh, ...saved, perks: { ...fresh.perks, ...saved.perks } };
+  } catch (e) { // private browsing or a broken save
+    return defaultSave();
+  };
+};
+const writeSave = () => {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+  } catch (e) {
+    // can't save on this device, progress lasts until the page closes
+  };
+};
+const save = loadSave();
+
+// permanent upgrades bought with coins
+const PERKS = [
+  { id: 'shield', name: 'Head Start', desc: 'Start each run with a shield', max: 2, price: (level) => 40 * (level + 1) },
+  { id: 'life', name: 'Tough Blob', desc: '+1 starting life', max: 2, price: (level) => 60 * (level + 1) },
+  { id: 'cards', name: 'More Choices', desc: '4 upgrade cards instead of 3', max: 1, price: () => 120 },
+];
+// the Blobby family: recolored with a hue shift, each with a perk
+const BLOBBIES = {
+  classic: { name: 'Blobby', desc: 'The original', hue: 0, price: 0, apply: () => {} },
+  zippy: { name: 'Zippy', desc: 'Moves 20% faster', hue: 100, price: 75, apply: (s) => { s.speed *= 1.2; } },
+  tiny: { name: 'Tiny', desc: 'Smaller hitbox', hue: 200, price: 100, apply: (s) => { s.hitboxScale *= 0.85; } },
+  lucky: { name: 'Lucky', desc: 'x1.5 coins', hue: 290, price: 150, apply: (s) => { s.coinMult *= 1.5; } },
+};
+const currentBlobby = () => BLOBBIES[save.blobby] || BLOBBIES.classic;
+
+const newStats = () => {
+  const s = baseStats();
+  s.shield += save.perks.shield;
+  s.lives += save.perks.life;
+  currentBlobby().apply(s);
+  return s;
+};
+const baseStats = () => ({
   speed: 1, // player speed multiplier
   lives: 3,
   shield: 0, // hits blocked before losing a life
@@ -337,7 +393,7 @@ const endWave = () => {
     if (rocks[i].kind === 'rock') removeRock(i);
   };
   const choices = UPGRADES.filter((u) => !taken.includes(u.id) && (!u.ok || u.ok(stats)));
-  offered = shuffle(choices).slice(0, 3);
+  offered = shuffle(choices).slice(0, 3 + save.perks.cards);
   cardIndex = 0;
   cardsReadyAt = performance.now() + 500;
   const bonus = wave * 2;
@@ -426,6 +482,7 @@ const resetRun = () => {
   runCoins = 0;
   invulnerable = 0;
   stats = newStats();
+  player.style.filter = `hue-rotate(${currentBlobby().hue}deg)`;
   wave = START_WAVE;
   waveTime = 0;
   choosing = false;
@@ -439,6 +496,8 @@ const startGame = () => { //when you hit start button on main page
   resetRun();
   startButton.style.display = 'none';
   title.style.display = 'none';
+  shopButton.style.display = 'none';
+  bank.style.display = 'none';
   tryAgain.style.display = 'none';
   yesButton.style.display = 'none';
   noButton.style.display = 'none';
@@ -459,7 +518,15 @@ const youLose = () => { // brings up try again when you get hit
   finalScore.style.display = 'block';
   player.classList.remove('goLeft', 'goRight', 'hurt');
   player.classList.add('dead')
-  finalScore.innerHTML = `SCORE: ${Math.floor(score)}<div class="runStats">REACHED WAVE ${wave} · ${Math.floor(runCoins)} COINS</div>`;
+  const earned = Math.floor(runCoins);
+  const newBest = Math.floor(score) > save.best;
+  save.coins += earned;
+  save.best = Math.max(save.best, Math.floor(score));
+  save.bestWave = Math.max(save.bestWave, wave);
+  writeSave();
+  finalScore.innerHTML = `SCORE: ${Math.floor(score)}`
+    + `<div class="runStats">REACHED WAVE ${wave} · +${earned} COINS</div>`
+    + `<div class="runStats">${newBest ? 'NEW BEST!' : `BEST: ${save.best}`}</div>`;
   currentScore.style.display = 'none';
   body.removeEventListener('keydown', movePlayer, true);
   removeTouch();
@@ -471,8 +538,7 @@ const restartGame = () => { //when you hit yes button on lose state
 };
 const backToMain = () => { //when you hit no button on lose state
   resetRun();
-  startButton.style.display = 'block';
-  title.style.display = 'block';
+  showMainMenu();
   finalScore.style.display = 'none';
   currentScore.style.display = 'none';
   tryAgain.style.display = 'none';
@@ -482,9 +548,90 @@ const backToMain = () => { //when you hit no button on lose state
 }
 
 
+// main menu and shop
+const showMainMenu = () => {
+  startButton.style.display = 'block';
+  title.style.display = 'block';
+  shopButton.style.display = 'block';
+  bank.style.display = 'block';
+  shopMenu.style.display = 'none';
+  bank.innerText = `COINS ${save.coins} · BEST ${save.best} · WAVE ${save.bestWave}`;
+};
+const openShop = () => {
+  startButton.style.display = 'none';
+  title.style.display = 'none';
+  shopButton.style.display = 'none';
+  bank.style.display = 'none';
+  shopMenu.style.display = 'block';
+  renderShop();
+};
+const addShopItem = ({ name, desc, tag, hue, disabled, buy }) => {
+  const item = document.createElement('button');
+  item.type = 'button';
+  item.className = 'shopItem';
+  item.disabled = disabled;
+  item.innerHTML = '<span class="itemName"></span><span class="itemDesc"></span><span class="itemTag"></span>';
+  if (hue !== undefined) {
+    const preview = document.createElement('span');
+    preview.className = 'preview';
+    preview.style.filter = `hue-rotate(${hue}deg)`;
+    item.prepend(preview);
+  };
+  item.querySelector('.itemName').innerText = name;
+  item.querySelector('.itemDesc').innerText = desc;
+  item.querySelector('.itemTag').innerText = tag;
+  item.addEventListener('click', () => {
+    buy();
+    writeSave();
+    renderShop();
+  });
+  shopList.appendChild(item);
+};
+const renderShop = () => {
+  shopCoins.innerText = `COINS ${save.coins}`;
+  shopList.innerHTML = '';
+  PERKS.forEach((perk) => {
+    const level = save.perks[perk.id];
+    const maxed = level >= perk.max;
+    const price = perk.price(level);
+    addShopItem({
+      name: perk.name,
+      desc: perk.desc,
+      tag: maxed ? `MAXED ${level}/${perk.max}` : `${price} COINS · ${level}/${perk.max}`,
+      disabled: maxed || save.coins < price,
+      buy: () => {
+        save.coins -= price;
+        save.perks[perk.id] += 1;
+      },
+    });
+  });
+  Object.entries(BLOBBIES).forEach(([id, blobby]) => {
+    const owned = save.owned.includes(id);
+    const selected = save.blobby === id;
+    addShopItem({
+      name: blobby.name,
+      desc: blobby.desc,
+      hue: blobby.hue,
+      tag: selected ? 'PLAYING' : owned ? 'TAP TO PLAY' : `${blobby.price} COINS`,
+      disabled: selected || (!owned && save.coins < blobby.price),
+      buy: () => {
+        if (!owned) {
+          save.coins -= blobby.price;
+          save.owned.push(id);
+        };
+        save.blobby = id;
+      },
+    });
+  });
+};
+
+
 //on start up run these functions
 stats = newStats();
+showMainMenu();
 startButton.addEventListener('click', startGame);
+shopButton.addEventListener('click', openShop);
+shopBack.addEventListener('click', showMainMenu);
 gameTime = window.requestAnimationFrame(movingParts);
 
 // lets the game install to the home screen and work offline

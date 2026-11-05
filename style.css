@@ -72,6 +72,12 @@ button:active {
   animation-name: enterRight;
   animation-duration: 2s;
 }
+#shop {
+  top: 65%;
+  left: 37%;
+  animation-name: enterLeft;
+  animation-duration: 2s;
+}
 #no {
   display: none;
   top: 50%;
@@ -92,9 +98,10 @@ font-size: 7vmin;
 text-shadow: -5px 5px 50px #efb03b;
 color: #ed9711;
 width: 100%;
-top: 36%;
+top: 27%;
 position: absolute;
 display: none;
+pointer-events: none; /* never block the YES/NO buttons */
 animation: enterBottom 1s;
 }
 .currentScore {
@@ -105,6 +112,84 @@ color: #ed9711;
 position: absolute;
 display: none;
 animation: enterBottom 1s;
+}
+
+/* coins and best score on the main menu */
+.bank {
+  font-family: 'Bungee', cursive;
+  font-size: 4vmin;
+  color: #ed9711;
+  text-shadow: -2px 2px 20px #efb03b;
+  position: absolute;
+  bottom: 6%;
+  width: 100%;
+  animation: enterBottom 2s;
+}
+
+/* shop */
+#shopMenu {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow-y: auto;
+  touch-action: pan-y; /* lets the list scroll on phones */
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left));
+  background: rgba(31, 25, 21, .8);
+}
+.shopHeader {
+  font-family: 'Bungee Shade', cursive;
+  font-size: 10vmin;
+  text-shadow: -5px 5px 50px #efb03b;
+  color: #ed9711;
+}
+.shopCoins {
+  font-family: 'Bungee', cursive;
+  font-size: 5vmin;
+  color: #ffd23f;
+  margin-bottom: 3vmin;
+}
+.shopList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  max-width: 1000px;
+  margin: 0 auto 16px;
+}
+button.shopItem,
+button#shopBack {
+  position: static;
+  width: auto;
+  height: auto;
+  font-size: 16px;
+}
+button.shopItem {
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+button.shopItem:disabled {
+  opacity: .55;
+}
+.shopItem .itemDesc {
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+}
+.shopItem .itemTag {
+  font-size: 13px;
+}
+.shopItem .preview {
+  width: 44px;
+  height: 44px;
+  background: url('blobStates/bloby2.png') center / contain no-repeat;
+}
+button#shopBack {
+  padding: 10px 32px;
 }
 
 /* upgrade cards between waves */
