@@ -367,23 +367,27 @@ button.card.selected {
 
 /* pickups */
 .block.coin {
-  background: radial-gradient(circle at 35% 35%, #fff2a8, #f2c230 45%, #b8860b);
-  border-radius: 50%;
-  box-shadow: 0 0 14px 2px #ffd23f;
+  background: url(rocks/coin.png) center / contain no-repeat;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 0 6px #ffd23f);
+  image-rendering: pixelated;
   z-index: 0;
 }
 .block.bubble {
-  background: radial-gradient(circle at 35% 35%, #ffffffcc, #7fd3ff66 60%);
-  border: 2px solid #bfe9ff;
-  border-radius: 50%;
-  box-shadow: 0 0 16px 2px #7fd3ff;
+  background: url(rocks/bubble.png) center / contain no-repeat;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 0 6px #7fd3ff);
+  image-rendering: pixelated;
   z-index: 0;
 }
 .block.bomb {
-  background: radial-gradient(circle at 35% 35%, #666, #111 60%);
-  border: 2px solid #ff5a3c;
-  border-radius: 50%;
-  box-shadow: 0 0 16px 2px #ff5a3c;
+  background: url(rocks/bomb.png) center / contain no-repeat;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 0 6px #ff5a3c);
+  image-rendering: pixelated;
   z-index: 0;
 }
 /* ring around BLOBBY while a shield is up */
