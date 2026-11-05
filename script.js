@@ -88,13 +88,15 @@ const moveBlobby = () => {
 
 // drops the rocks
 const dropEm = () => {
-  if (blocks !== [] && playing) {
-    for (let i=0; i<blocks.length; i++) {
+  if (blocks.length && playing) {
+    // loop backwards so removing a block doesn't skip the next one
+    for (let i = blocks.length - 1; i >= 0; i--) {
       checkCollision(i);
-      if (blocks[i] !== undefined && (blocks[i].offsetTop) < (window.innerHeight - blocks[i].offsetHeight)) {
+      if (blocks[i].offsetTop < (window.innerHeight - blocks[i].offsetHeight)) {
         blocks[i].style.top =`${(blocks[i].offsetTop + (window.innerHeight / speed))}px`; // converts a percentage into pixel form to keep drop rate the same for all screen sizes
       } else {
-        resetBlock();
+        blocks[i].remove();
+        blocks.splice(i, 1);
       };
     };
   };
@@ -105,9 +107,9 @@ const speedUp = () => {
   if (playing) {
     score += 1;
     if (score % 400 === 0) {
-      speed -= 5;
+      speed = Math.max(speed - 5, 20); // floor keeps rocks falling down
     };
-    if (rate % 400 === 0) {
+    if (score % 400 === 0 && rate > 3) {
       rate -= 1;
     };
   };
@@ -132,7 +134,7 @@ const resetBlock = () => {
   firstBlock.parentNode.removeChild(firstBlock);
 };
 const resetBlocks = () => {
-  while (blocks.length > 1){
+  while (blocks.length > 0){
     resetBlock();
   }
 };
