@@ -246,6 +246,24 @@ button.card.selected {
   will-change: transform;
 }
 
+/* rock types */
+.block.boulder {
+  background: #7a6a55;
+  border-radius: 40%;
+}
+.block.needle {
+  background: #d8eef5;
+  border-radius: 3px;
+}
+.block.splitter,
+.block.shard {
+  background: #b04fd1;
+}
+.block.drifter {
+  background: #2f8fd8;
+  border-radius: 50% 50% 5px 5px;
+}
+
 /* animations */
 @keyframes blink {
   50% {

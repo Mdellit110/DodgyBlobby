@@ -46,9 +46,30 @@ const PLAYER_W = 0.0703125; // player size and spot, matches .player in style.cs
 const PLAYER_H = 0.13533834586466165;
 const PLAYER_TOP = 0.84;
 
-// w and h are fractions of the screen width and height
+// w and h are fractions of the screen width and height.
+// from is the first wave a type can show up in
 const ROCK_TYPES = {
-  normal: { w: 0.02, h: 0.06, fall: 1 },
+  normal: { w: 0.02, h: 0.06, fall: 1, from: 1 },
+  boulder: { w: 0.045, h: 0.1, fall: 0.65, from: 2 }, // big and slow
+  needle: { w: 0.008, h: 0.09, fall: 1.7, from: 3 }, // thin and fast
+  splitter: { w: 0.03, h: 0.07, fall: 0.9, from: 4 }, // breaks into 2 shards
+  drifter: { w: 0.02, h: 0.06, fall: 0.9, from: 5, drift: 0.2 }, // slides sideways
+  shard: { w: 0.014, h: 0.04, fall: 1 }, // splitter pieces, never spawned directly
+};
+const SPLIT_AT = 0.4; // splitters break this far down the screen
+const SHARD_SPREAD = 0.25; // how fast shards fly apart, in screen widths per second
+
+// picks a rock type at random. newer types get more common in later waves
+const pickRockType = () => {
+  const weights = Object.entries(ROCK_TYPES)
+    .filter(([, t]) => t.from && wave >= t.from)
+    .map(([type, t]) => [type, type === 'normal' ? 10 : Math.min(2 * (wave - t.from + 1), 6)]);
+  let roll = Math.random() * weights.reduce((sum, [, w]) => sum + w, 0);
+  for (const [type, w] of weights) {
+    roll -= w;
+    if (roll < 0) return type;
+  };
+  return 'normal';
 };
 
 const newStats = () => ({
@@ -145,7 +166,7 @@ const makeRock = (type, x, y) => {
     kind: t.kind || 'rock',
     x: x === undefined ? Math.random() * (W - w) : x, // random drop spot
     y: y === undefined ? -h : y, // just above the screen
-    vx: 0,
+    vx: t.drift ? t.drift * W * (Math.random() < 0.5 ? -1 : 1) : 0,
     vy: FALL_SPEED * t.fall * H,
   };
   drawRock(rock);
@@ -166,7 +187,7 @@ const generateBlocks = (dt) => {
   spawnTimer -= dt;
   if (spawnTimer <= 0) {
     spawnTimer += SPAWN_EVERY / (difficulty() * stats.spawnMult);
-    makeRock('normal');
+    makeRock(pickRockType());
   };
 };
 
@@ -233,6 +254,18 @@ const dropEm = (dt) => {
     if (!rock) continue; // rocks can be cleared mid-loop
     rock.x += rock.vx * dt;
     rock.y += rock.vy * fall * dt;
+    if (rock.type === 'drifter') { // bounce off the walls
+      if (rock.x < 0) rock.vx = Math.abs(rock.vx);
+      if (rock.x + rock.w > W) rock.vx = -Math.abs(rock.vx);
+    };
+    if (rock.type === 'splitter' && rock.y > H * SPLIT_AT) {
+      const middle = rock.x + rock.w / 2;
+      removeRock(i);
+      [-1, 1].forEach((side) => {
+        makeRock('shard', middle, rock.y).vx = side * SHARD_SPREAD * W;
+      });
+      continue;
+    };
     if (rock.y > H || rock.x < -rock.w || rock.x > W) {
       removeRock(i);
       continue;
